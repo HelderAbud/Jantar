@@ -587,6 +587,33 @@
       gap: 10px;
     }
 
+    .food-other-wrap {
+      width: 100%;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .food-other-wrap.show { display: block; }
+
+    .food-other-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      background: var(--glass);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .food-other-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.2);
+    }
+
+    .food-other-input::placeholder { color: var(--text-muted); }
+
     /* Screen 6 — Final */
     .final-icon { font-size: 56px; margin: 24px 0 12px; }
 
@@ -958,7 +985,12 @@
           <button class="food-btn" data-food="Pizza 🍕"><span>🍕</span><span>Pizza</span></button>
           <button class="food-btn" data-food="Churrasco 🥩"><span>🥩</span><span>Churrasco</span></button>
           <button class="food-btn" data-food="Hamburguer 🍔"><span>🍔</span><span>Hamburguer</span></button>
+          <button class="food-btn" data-food="other" data-other="true"><span>✨</span><span>Outro</span></button>
           <button class="food-btn chef" data-food="A chef decide 😌"><span>😌</span><span>A chef decide</span></button>
+        </div>
+
+        <div class="food-other-wrap" id="food-other-wrap">
+          <input type="text" class="food-other-input" id="food-other-input" placeholder="O que você prefere? 🍽️" maxlength="80">
         </div>
 
         <button class="btn-next" id="btn-finish" style="display:none">Confirmar ✨</button>
@@ -992,7 +1024,7 @@
       <div class="screen screen-scroll" id="screen-7">
         <div id="calendar-panel">
           <h2 class="cal-title">Quando combina?</h2>
-          <p class="food-subtitle">Toque no melhor dia pra gente</p>
+          <p class="food-subtitle">Toque no melhor dia pra gente<br><span style="font-size:12px;opacity:0.75">Quartas-feiras indisponíveis</span></p>
 
           <div class="calendar glass-card">
             <div class="cal-nav">
@@ -1313,16 +1345,43 @@
     /* ── Food selection ── */
     let selectedFood = '';
     const finishBtn = document.getElementById('btn-finish');
+    const foodOtherWrap = document.getElementById('food-other-wrap');
+    const foodOtherInput = document.getElementById('food-other-input');
+    let isOtherFood = false;
+
+    function updateFinishVisibility() {
+      if (isOtherFood) {
+        finishBtn.style.display = foodOtherInput.value.trim() ? 'block' : 'none';
+        selectedFood = foodOtherInput.value.trim()
+          ? 'Outro: ' + foodOtherInput.value.trim() + ' ✨'
+          : '';
+      } else {
+        finishBtn.style.display = selectedFood ? 'block' : 'none';
+      }
+    }
 
     document.querySelectorAll('.food-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        selectedFood = btn.dataset.food;
-        finishBtn.style.display = 'block';
+        isOtherFood = btn.dataset.other === 'true';
+
+        if (isOtherFood) {
+          foodOtherWrap.classList.add('show');
+          foodOtherInput.focus();
+          selectedFood = '';
+        } else {
+          foodOtherWrap.classList.remove('show');
+          foodOtherInput.value = '';
+          selectedFood = btn.dataset.food;
+        }
+
+        updateFinishVisibility();
         playTone(587, 0.08, 0.05);
       });
     });
+
+    foodOtherInput.addEventListener('input', updateFinishVisibility);
 
     finishBtn.addEventListener('click', () => {
       document.getElementById('chosen-food').textContent =
@@ -1350,6 +1409,7 @@
     }
 
     function isDaySelectable(d) {
+      if (d.getDay() === 3) return false; /* quartas — Helder indisponível */
       return d >= todayStart && d <= maxDate;
     }
 
