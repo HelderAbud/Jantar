@@ -1,0 +1,30 @@
+---
+description: Rheyder Method v1.2 + Superpowers para o projeto Convite Jantar
+alwaysApply: true
+---
+
+# Rheyder Method + Superpowers
+
+- Antes de executar, trie por risco e ambiguidade: `Hotfix`, `Complex`, `Normal` ou `Simple`.
+- `Simple`: mudança pequena e localizada (texto, cor, timing de animação).
+- `Normal`: nova tela, fluxo, efeito ou contrato do convite; exige plano em `.cursor/plans/`.
+- `Complex`: backend, persistência, integração ou alto custo de erro.
+- `Hotfix`: link quebrado ou convite inutilizável em produção; patch mínimo.
+
+## Contratos e fatias
+
+- O fluxo das 6 telas e textos acordados são **contrato mínimo** — ver `AGENTS.md`.
+- Código não inventa tela ou interação nova fora de spec/plano sem atualizar o desenho.
+- Fatias verticais: cada entrega fecha um pedaço verificável (ex.: “tela 4 com botão que foge funcionando no touch”).
+- Se escopo crescer (formulário, API, login), subir trilha e realinhar.
+
+## Plano e execução
+
+- Tarefa não trivial: brainstorming curto, Plan Mode, plano `plan-YYYY-MM-DD-assunto.md` antes de editar.
+- Validar manualmente no mobile após cada fatia relevante.
+- Nunca commitar, pushar ou publicar sem pedido explícito do usuário.
+
+## Revisão e done
+
+- Revisar diff, escopo, privacidade e aderência ao tom do convite.
+- Entrega pronta: o que mudou, o que foi testado, riscos residuais.

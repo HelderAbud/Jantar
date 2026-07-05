@@ -499,25 +499,31 @@
     .btn-accept:active { transform: scale(0.96); }
 
     .btn-flee {
-      position: relative;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       padding: 14px 24px;
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 14px;
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-muted);
       font-size: 15px;
-      cursor: pointer;
-      transition: left 0.12s ease, top 0.12s ease;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
       white-space: nowrap;
+      transition: left 0.04s linear, top 0.04s linear;
+      pointer-events: none;
     }
 
     .flee-zone {
       position: relative;
       width: 100%;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      flex: 1;
+      min-height: 160px;
+      margin-top: 8px;
     }
 
     /* Screen 5 — Food */
@@ -642,6 +648,183 @@
       width: 100%;
     }
 
+    .screen-scroll {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 48px;
+    }
+
+    /* Screen 7 — Calendar */
+    .cal-title {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin: 8px 0 4px;
+    }
+
+    .calendar {
+      width: 100%;
+      margin: 16px 0 12px;
+      padding: 16px;
+    }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .cal-nav-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .cal-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .cal-nav-btn:not(:disabled):active {
+      background: rgba(255, 107, 157, 0.2);
+    }
+
+    .cal-month {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .cal-day.empty { pointer-events: none; }
+
+    .cal-day.disabled {
+      color: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+    }
+
+    .cal-day.available:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .cal-day.selected {
+      background: linear-gradient(135deg, var(--accent), #c084fc);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    .cal-day.today:not(.selected) {
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .cal-hint {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    .calendar-done {
+      text-align: center;
+      width: 100%;
+      animation: confetti-bounce 0.6s ease;
+    }
+
+    .calendar-done-icon {
+      font-size: 52px;
+      margin: 24px 0 12px;
+    }
+
+    .calendar-done-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .calendar-summary {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .calendar-summary p {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .calendar-summary strong { color: var(--text); }
+
+    .whatsapp-hint {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+
+    .btn-whatsapp {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(37, 211, 102, 0.35);
+      transition: transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-whatsapp:active { transform: scale(0.97); }
+
+    .hidden { display: none !important; }
+
     /* Confetti canvas */
     #confetti {
       position: fixed;
@@ -746,7 +929,7 @@
         <div class="glass-card observation">
           <div class="obs-label">⚠️ Observação</div>
           <div class="obs-text">
-            A IA detectou que <strong>Alexia sorri</strong> quando conversa com <strong>Helder</strong>.
+            A IA detectou que <strong>Helder acha Alexia linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.
           </div>
         </div>
 
@@ -761,8 +944,8 @@
         <div class="mission-emoji">🍝🍷✨</div>
 
         <button class="btn-accept" id="btn-accept">❤️ Aceito</button>
-        <div class="flee-zone">
-          <button class="btn-flee" id="btn-flee">🙈 Ainda não</button>
+        <div class="flee-zone" id="flee-zone">
+          <span class="btn-flee" id="btn-flee">🙈 Ainda não</span>
         </div>
       </div>
 
@@ -782,14 +965,14 @@
       </div>
 
       <!-- Tela 6: Final -->
-      <div class="screen" id="screen-6">
+      <div class="screen screen-scroll" id="screen-6">
         <div class="final-icon">📅</div>
         <div class="final-status">Status atualizado</div>
         <h2 class="final-title">❤️ Jantar desbloqueado</h2>
 
         <div class="final-step glass-card">
-          <h3>Próximo passo</h3>
-          <p>Escolher um dia que encaixe na nossa correria.</p>
+          <h3>Quase lá</h3>
+          <p>Escolhe um dia que encaixe na nossa correria 👇</p>
         </div>
 
         <div class="glass-card" style="width:100%">
@@ -802,6 +985,43 @@
         </div>
 
         <div class="chosen-food" id="chosen-food"></div>
+        <button class="btn-next" id="btn-to-calendar">Escolher o dia 📅</button>
+      </div>
+
+      <!-- Tela 7: Calendário -->
+      <div class="screen screen-scroll" id="screen-7">
+        <div id="calendar-panel">
+          <h2 class="cal-title">Quando combina?</h2>
+          <p class="food-subtitle">Toque no melhor dia pra gente</p>
+
+          <div class="calendar glass-card">
+            <div class="cal-nav">
+              <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Mês anterior">‹</button>
+              <span class="cal-month" id="cal-month-label"></span>
+              <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Próximo mês">›</button>
+            </div>
+            <div class="cal-weekdays">
+              <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+
+          <div class="cal-hint" id="cal-hint">Selecione um dia disponível</div>
+          <button class="btn-next" id="btn-confirm-date" disabled>Confirmar dia ✨</button>
+        </div>
+
+        <div id="calendar-done" class="calendar-done hidden">
+          <div class="calendar-done-icon">🎉</div>
+          <h2 class="calendar-done-title">Dia reservado!</h2>
+          <div class="glass-card calendar-summary">
+            <p><strong>Data:</strong> <span id="summary-date"></span></p>
+            <p><strong>Jantar:</strong> <span id="summary-food"></span></p>
+          </div>
+          <p class="whatsapp-hint">Toque no botão abaixo para me enviar tudo no WhatsApp 😊</p>
+          <button type="button" class="btn-whatsapp" id="btn-whatsapp">
+            💬 Enviar pro Helder
+          </button>
+        </div>
       </div>
 
       <div class="home-indicator"></div>
@@ -970,31 +1190,62 @@
 
     document.getElementById('btn-to-mission').addEventListener('click', () => goTo(4));
 
-    /* ── Flee button ── */
+    /* ── Flee button (uncatchable) ── */
     const fleeBtn = document.getElementById('btn-flee');
-    const fleeZone = fleeBtn.parentElement;
+    const fleeZone = document.getElementById('flee-zone');
+    const screen4 = document.getElementById('screen-4');
+    const FLEE_RADIUS = 180;
+    const FLEE_FORCE = 130;
 
-    function moveFlee(e) {
-      const rect = fleeZone.getBoundingClientRect();
-      const btnRect = fleeBtn.getBoundingClientRect();
-      const mx = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-      const my = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
-      const cx = btnRect.left + btnRect.width / 2;
-      const cy = btnRect.top + btnRect.height / 2;
-      const dist = Math.hypot(mx - cx, my - cy);
-      if (dist < 100) {
-        const angle = Math.atan2(cy - my, cx - mx);
-        const nx = Math.cos(angle) * 60;
-        const ny = Math.sin(angle) * 40;
-        fleeBtn.style.position = 'absolute';
-        fleeBtn.style.left = Math.max(0, Math.min(rect.width - btnRect.width, (btnRect.left - rect.left) + nx)) + 'px';
-        fleeBtn.style.top = Math.max(0, Math.min(rect.height - btnRect.height, (btnRect.top - rect.top) + ny)) + 'px';
-        playTone(330, 0.05, 0.03);
-      }
+    function getPointer(e) {
+      const t = e.touches?.[0] ?? e.changedTouches?.[0];
+      return { x: t?.clientX ?? e.clientX ?? 0, y: t?.clientY ?? e.clientY ?? 0 };
     }
 
-    fleeZone.addEventListener('mousemove', moveFlee);
-    fleeZone.addEventListener('touchmove', moveFlee, { passive: true });
+    function fleeAway(px, py) {
+      const rect = fleeZone.getBoundingClientRect();
+      const btnRect = fleeBtn.getBoundingClientRect();
+      const cx = btnRect.left + btnRect.width / 2;
+      const cy = btnRect.top + btnRect.height / 2;
+      const dist = Math.hypot(px - cx, py - cy);
+      if (dist >= FLEE_RADIUS) return false;
+
+      fleeBtn.style.transform = 'none';
+      const angle = Math.atan2(cy - py, cx - px);
+      const force = FLEE_FORCE + Math.random() * 50;
+      const curLeft = parseFloat(fleeBtn.style.left) || (btnRect.left - rect.left);
+      const curTop = parseFloat(fleeBtn.style.top) || (btnRect.top - rect.top);
+      const maxW = rect.width - btnRect.width;
+      const maxH = rect.height - btnRect.height;
+
+      let left = curLeft + Math.cos(angle) * force;
+      let top = curTop + Math.sin(angle) * force;
+
+      const newCx = rect.left + left + btnRect.width / 2;
+      const newCy = rect.top + top + btnRect.height / 2;
+      if (Math.hypot(px - newCx, py - newCy) < 90 || left < 0 || left > maxW || top < 0 || top > maxH) {
+        left = Math.random() * Math.max(0, maxW);
+        top = Math.random() * Math.max(0, maxH);
+      }
+
+      left = Math.max(0, Math.min(maxW, left));
+      top = Math.max(0, Math.min(maxH, top));
+      fleeBtn.style.left = left + 'px';
+      fleeBtn.style.top = top + 'px';
+      playTone(330, 0.04, 0.03);
+      return true;
+    }
+
+    function onFleeEvent(e) {
+      const p = getPointer(e);
+      if (fleeAway(p.x, p.y)) e.preventDefault?.();
+    }
+
+    [screen4, fleeZone].forEach((el) => {
+      el.addEventListener('mousemove', onFleeEvent);
+      el.addEventListener('touchstart', onFleeEvent, { passive: false });
+      el.addEventListener('touchmove', onFleeEvent, { passive: false });
+    });
 
     /* ── Accept + Confetti ── */
     document.getElementById('btn-accept').addEventListener('click', () => {
@@ -1077,6 +1328,144 @@
       document.getElementById('chosen-food').textContent =
         selectedFood ? `Escolha registrada: ${selectedFood}` : '';
       goTo(6);
+      playSuccess();
+    });
+
+    /* ── Calendar ── */
+    const monthNamesCal = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    let calYear, calMonth, selectedDate = null;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const maxDate = new Date(todayStart);
+    maxDate.setDate(maxDate.getDate() + 60);
+
+    function formatDateLong(d) {
+      return `${weekdays[d.getDay()]}, ${d.getDate()} de ${months[d.getMonth()]}`;
+    }
+
+    function isSameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
+    }
+
+    function isDaySelectable(d) {
+      return d >= todayStart && d <= maxDate;
+    }
+
+    function renderCalendar() {
+      const label = document.getElementById('cal-month-label');
+      const grid = document.getElementById('cal-grid');
+      const prevBtn = document.getElementById('cal-prev');
+      const nextBtn = document.getElementById('cal-next');
+
+      label.textContent = `${monthNamesCal[calMonth]} ${calYear}`;
+
+      const first = new Date(calYear, calMonth, 1);
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const startPad = first.getDay();
+
+      grid.innerHTML = '';
+
+      for (let i = 0; i < startPad; i++) {
+        const empty = document.createElement('span');
+        empty.className = 'cal-day empty';
+        grid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(calYear, calMonth, day);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cal-day';
+        btn.textContent = day;
+
+        if (isSameDay(d, todayStart)) btn.classList.add('today');
+
+        if (!isDaySelectable(d)) {
+          btn.classList.add('disabled');
+          btn.disabled = true;
+        } else {
+          btn.classList.add('available');
+          if (selectedDate && isSameDay(d, selectedDate)) btn.classList.add('selected');
+          btn.addEventListener('click', () => {
+            selectedDate = d;
+            document.getElementById('btn-confirm-date').disabled = false;
+            document.getElementById('cal-hint').textContent = formatDateLong(d);
+            renderCalendar();
+            playTone(587, 0.08, 0.05);
+          });
+        }
+
+        grid.appendChild(btn);
+      }
+
+      const now = new Date();
+      prevBtn.disabled = calYear === now.getFullYear() && calMonth === now.getMonth();
+
+      const lastOfMonth = new Date(calYear, calMonth + 1, 0);
+      nextBtn.disabled = lastOfMonth < todayStart ||
+        (calYear === maxDate.getFullYear() && calMonth >= maxDate.getMonth());
+    }
+
+    function initCalendar() {
+      selectedDate = null;
+      document.getElementById('btn-confirm-date').disabled = true;
+      document.getElementById('cal-hint').textContent = 'Selecione um dia disponível';
+      document.getElementById('calendar-panel').classList.remove('hidden');
+      document.getElementById('calendar-done').classList.add('hidden');
+
+      const now = new Date();
+      calYear = now.getFullYear();
+      calMonth = now.getMonth();
+      renderCalendar();
+    }
+
+    document.getElementById('btn-to-calendar').addEventListener('click', () => {
+      initCalendar();
+      goTo(7);
+    });
+
+    document.getElementById('cal-prev').addEventListener('click', () => {
+      if (calMonth === 0) { calMonth = 11; calYear--; }
+      else calMonth--;
+      renderCalendar();
+    });
+
+    document.getElementById('cal-next').addEventListener('click', () => {
+      if (calMonth === 11) { calMonth = 0; calYear++; }
+      else calMonth++;
+      renderCalendar();
+    });
+
+    document.getElementById('btn-confirm-date').addEventListener('click', () => {
+      if (!selectedDate) return;
+      document.getElementById('summary-date').textContent = formatDateLong(selectedDate);
+      document.getElementById('summary-food').textContent = selectedFood || 'A combinar';
+      document.getElementById('calendar-panel').classList.add('hidden');
+      document.getElementById('calendar-done').classList.remove('hidden');
+      playSuccess();
+      launchConfetti();
+    });
+
+    /* ── WhatsApp ── */
+    const WHATSAPP_NUMBER = '5561985035666';
+
+    function buildWhatsAppMessage() {
+      const dateStr = selectedDate ? formatDateLong(selectedDate) : 'A combinar';
+      const foodStr = selectedFood || 'A combinar';
+      return (
+        'Oi Helder! ❤️\n\n' +
+        'Aceitei o convite!\n\n' +
+        '🍽 Jantar: ' + foodStr + '\n' +
+        '📅 Dia: ' + dateStr + '\n\n' +
+        'Te vejo lá! ✨'
+      );
+    }
+
+    document.getElementById('btn-whatsapp').addEventListener('click', () => {
+      const text = encodeURIComponent(buildWhatsAppMessage());
+      window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + text, '_blank');
       playSuccess();
     });
   </script>

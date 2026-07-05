@@ -1,0 +1,8 @@
+# Rascunhos e notas pessoais — não versionar
+Aléxia.md.txt
+*.md.txt
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
