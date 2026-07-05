@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0a0a12">
+  <title>Missão desbloqueada ✨</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --glass: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --accent: #ff6b9d;
+      --accent-glow: rgba(255, 107, 157, 0.45);
+      --text: #fff;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --success: #34d399;
+      --phone-w: min(390px, 100vw - 24px);
+      --phone-h: min(844px, 100dvh - 24px);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background: #050508;
+      color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Ambient background */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255, 80, 140, 0.35), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 85% 75%, rgba(120, 80, 255, 0.3), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(255, 180, 100, 0.12), transparent 60%),
+        linear-gradient(160deg, #0d0d18 0%, #1a0a1e 40%, #0a1020 100%);
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      animation: float-particle linear infinite;
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(110vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .hearts-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .heart-float {
+      position: absolute;
+      font-size: 1rem;
+      opacity: 0;
+      animation: heart-rise ease-in-out infinite;
+    }
+
+    @keyframes heart-rise {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.5; }
+      85% { opacity: 0.3; }
+      100% { transform: translateY(-20vh) rotate(25deg); opacity: 0; }
+    }
+
+    /* Phone frame */
+    .stage {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      border-radius: 44px;
+      background: rgba(15, 15, 25, 0.55);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 32px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 50;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 14px;
+      left: 28px;
+      right: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .status-icons { display: flex; gap: 5px; align-items: center; font-size: 12px; }
+
+    .screens {
+      position: absolute;
+      inset: 0;
+      padding: 56px 24px 32px;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 56px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .glass-card {
+      width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Screen 1 — Lock */
+    .lock-time {
+      font-size: 72px;
+      font-weight: 200;
+      letter-spacing: -2px;
+      margin-top: 40px;
+      text-shadow: 0 2px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .lock-date {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+
+    .notification {
+      width: 100%;
+      animation: notif-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+    }
+
+    @keyframes notif-pop {
+      from { transform: translateY(20px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .notif-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ff6b9d, #c084fc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .notif-app { font-size: 13px; color: var(--text-muted); }
+    .notif-sender { font-weight: 600; font-size: 15px; }
+    .notif-body {
+      font-size: 16px;
+      line-height: 1.45;
+      margin-top: 6px;
+    }
+
+    .swipe-area {
+      position: absolute;
+      bottom: 36px;
+      left: 24px;
+      right: 24px;
+      text-align: center;
+    }
+
+    .swipe-track {
+      height: 52px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .swipe-track:active { cursor: grabbing; }
+
+    .swipe-thumb {
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fff, #e8e8f0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      transition: left 0.15s ease;
+      z-index: 2;
+    }
+
+    .swipe-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+      animation: pulse-label 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-label {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .swipe-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: linear-gradient(90deg, rgba(255, 107, 157, 0.3), rgba(192, 132, 252, 0.2));
+      border-radius: 26px;
+      transition: width 0.1s;
+    }
+
+    /* Screen 2 — AI */
+    .ai-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 24px 0 16px;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+      animation: ai-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ai-pulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 50px rgba(16, 185, 129, 0.7); }
+    }
+
+    .ai-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .ai-status {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+
+    .check-list {
+      width: 100%;
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .check-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 15px;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+
+    .check-list li.show {
+      animation: check-in 0.4s ease forwards;
+    }
+
+    @keyframes check-in {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .progress-wrap {
+      width: 100%;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+      border-radius: 4px;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+    }
+
+    /* Screen 3 — Result */
+    .result-icon {
+      font-size: 48px;
+      margin: 20px 0;
+      animation: brain-glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes brain-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(192, 132, 252, 0.9)); }
+    }
+
+    .result-label {
+      font-size: 16px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .result-percent {
+      font-size: 64px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #34d399, #6ee7b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 28px;
+    }
+
+    .observation {
+      width: 100%;
+      border-left: 3px solid #fbbf24;
+      padding-left: 14px;
+    }
+
+    .obs-label {
+      font-size: 13px;
+      color: #fbbf24;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .obs-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .obs-text strong { color: var(--text); }
+
+    .btn-next {
+      margin-top: auto;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #c084fc);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 24px var(--accent-glow);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-next:active { transform: scale(0.97); }
+
+    /* Screen 4 — Mission */
+    .mission-badge {
+      font-size: 40px;
+      margin: 16px 0 8px;
+    }
+
+    .mission-title {
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .mission-emoji {
+      font-size: 36px;
+      margin: 16px 0 32px;
+      letter-spacing: 8px;
+    }
+
+    .btn-accept {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff6b9d, #ff4081);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 30px var(--accent-glow);
+      transition: transform 0.15s;
+    }
+
+    .btn-accept:active { transform: scale(0.96); }
+
+    .btn-flee {
+      position: relative;
+      padding: 14px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      font-size: 15px;
+      cursor: pointer;
+      transition: left 0.12s ease, top 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .flee-zone {
+      position: relative;
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Screen 5 — Food */
+    .confetti-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin: 20px 0 8px;
+      animation: confetti-bounce 0.6s ease;
+    }
+
+    @keyframes confetti-bounce {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .food-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .food-btn {
+      padding: 20px 12px;
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      background: var(--glass);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .food-btn span:first-child { font-size: 28px; }
+
+    .food-btn:hover, .food-btn.selected {
+      border-color: var(--accent);
+      background: rgba(255, 107, 157, 0.15);
+      transform: scale(1.03);
+    }
+
+    .food-btn.chef {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Screen 6 — Final */
+    .final-icon { font-size: 56px; margin: 24px 0 12px; }
+
+    .final-status {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .final-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--accent);
+    }
+
+    .final-step {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .final-step h3 {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .final-step p {
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .promises {
+      width: 100%;
+      list-style: none;
+    }
+
+    .promises li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .promises li:last-child { border-bottom: none; }
+
+    .chosen-food {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(255, 107, 157, 0.12);
+      border-radius: 12px;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Confetti canvas */
+    #confetti {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .home-indicator {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 3px;
+      z-index: 50;
+    }
+
+    @media (max-height: 700px) {
+      .lock-time { font-size: 56px; margin-top: 20px; }
+      .result-percent { font-size: 48px; }
+      .mission-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hearts-bg" id="hearts"></div>
+  <canvas id="confetti"></canvas>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span id="clock-small">14:34</span>
+        <div class="status-icons">
+          <span>📶</span>
+          <span>Wi‑Fi</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <!-- Tela 1: Bloqueio -->
+      <div class="screen active" id="screen-1">
+        <div class="lock-time" id="lock-time">14:34</div>
+        <div class="lock-date" id="lock-date">Domingo, 5 de julho</div>
+
+        <div class="glass-card notification">
+          <div class="notif-header">
+            <div class="notif-icon">🔒</div>
+            <div>
+              <div class="notif-app">Convite recebido</div>
+              <div class="notif-sender">Helder</div>
+            </div>
+          </div>
+          <div class="notif-body">"Tem uma missão para você..."</div>
+        </div>
+
+        <div class="swipe-area">
+          <div class="swipe-track" id="swipe-track">
+            <div class="swipe-fill" id="swipe-fill"></div>
+            <div class="swipe-label">Deslize para desbloquear</div>
+            <div class="swipe-thumb" id="swipe-thumb">➡️</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela 2: IA -->
+      <div class="screen" id="screen-2">
+        <div class="ai-logo">🤖</div>
+        <div class="ai-title">OpenAI Relationship Analyzer</div>
+        <div class="ai-status" id="ai-status">Analisando...</div>
+
+        <ul class="check-list" id="check-list">
+          <li><span class="check-icon">✔</span> Conversas</li>
+          <li><span class="check-icon">✔</span> Bom humor</li>
+          <li><span class="check-icon">✔</span> Compatibilidade gastronômica</li>
+          <li><span class="check-icon">✔</span> Chance de boas risadas</li>
+        </ul>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Progresso da análise</span>
+            <span id="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela 3: Resultado -->
+      <div class="screen" id="screen-3">
+        <div class="result-icon">🧠</div>
+        <div class="result-label">Resultado encontrado...</div>
+        <div class="result-label">Probabilidade de um jantar agradável</div>
+        <div class="result-percent" id="result-pct">0%</div>
+
+        <div class="glass-card observation">
+          <div class="obs-label">⚠️ Observação</div>
+          <div class="obs-text">
+            A IA detectou que <strong>Alexia sorri</strong> quando conversa com <strong>Helder</strong>.
+          </div>
+        </div>
+
+        <button class="btn-next" id="btn-to-mission">Continuar →</button>
+      </div>
+
+      <!-- Tela 4: Missão -->
+      <div class="screen" id="screen-4">
+        <div class="mission-badge">❤️</div>
+        <h2 class="mission-title">Missão desbloqueada</h2>
+        <p class="food-subtitle">Você aceita jantar comigo?</p>
+        <div class="mission-emoji">🍝🍷✨</div>
+
+        <button class="btn-accept" id="btn-accept">❤️ Aceito</button>
+        <div class="flee-zone">
+          <button class="btn-flee" id="btn-flee">🙈 Ainda não</button>
+        </div>
+      </div>
+
+      <!-- Tela 5: Escolha -->
+      <div class="screen" id="screen-5">
+        <div class="confetti-title">❤️ Convite aceito ❤️</div>
+        <p class="food-subtitle">Agora só falta escolher:</p>
+
+        <div class="food-grid">
+          <button class="food-btn" data-food="Pizza 🍕"><span>🍕</span><span>Pizza</span></button>
+          <button class="food-btn" data-food="Churrasco 🥩"><span>🥩</span><span>Churrasco</span></button>
+          <button class="food-btn" data-food="Hamburguer 🍔"><span>🍔</span><span>Hamburguer</span></button>
+          <button class="food-btn chef" data-food="A chef decide 😌"><span>😌</span><span>A chef decide</span></button>
+        </div>
+
+        <button class="btn-next" id="btn-finish" style="display:none">Confirmar ✨</button>
+      </div>
+
+      <!-- Tela 6: Final -->
+      <div class="screen" id="screen-6">
+        <div class="final-icon">📅</div>
+        <div class="final-status">Status atualizado</div>
+        <h2 class="final-title">❤️ Jantar desbloqueado</h2>
+
+        <div class="final-step glass-card">
+          <h3>Próximo passo</h3>
+          <p>Escolher um dia que encaixe na nossa correria.</p>
+        </div>
+
+        <div class="glass-card" style="width:100%">
+          <h3 style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Prometo:</h3>
+          <ul class="promises">
+            <li><span>✔</span> Boa conversa</li>
+            <li><span>✔</span> Muitas risadas</li>
+            <li><span>✔</span> Sobremesa por minha conta 🍰</li>
+          </ul>
+        </div>
+
+        <div class="chosen-food" id="chosen-food"></div>
+      </div>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Clock ── */
+    const months = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    const weekdays = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const time = `${h}:${m}`;
+      document.getElementById('lock-time').textContent = time;
+      document.getElementById('clock-small').textContent = time;
+      document.getElementById('lock-date').textContent =
+        `${weekdays[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]}`;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    /* ── Particles & hearts ── */
+    const particlesEl = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1;
+      p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*10}s;`;
+      particlesEl.appendChild(p);
+    }
+
+    const heartsEl = document.getElementById('hearts');
+    for (let i = 0; i < 8; i++) {
+      const h = document.createElement('div');
+      h.className = 'heart-float';
+      h.textContent = ['❤️','💕','✨','💖'][Math.floor(Math.random()*4)];
+      h.style.cssText = `left:${Math.random()*100}%;animation-duration:${Math.random()*8+10}s;animation-delay:${Math.random()*12}s;`;
+      heartsEl.appendChild(h);
+    }
+
+    /* ── Sound (discrete) ── */
+    let audioCtx;
+    function playTone(freq = 440, dur = 0.08, vol = 0.06) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+      } catch (_) {}
+    }
+
+    function playChime() {
+      playTone(523, 0.1, 0.05);
+      setTimeout(() => playTone(659, 0.12, 0.05), 80);
+    }
+
+    function playSuccess() {
+      [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.15, 0.06), i * 100));
+    }
+
+    /* ── Navigation ── */
+    let currentScreen = 1;
+    function goTo(n) {
+      document.getElementById(`screen-${currentScreen}`).classList.remove('active');
+      currentScreen = n;
+      document.getElementById(`screen-${n}`).classList.add('active');
+      playChime();
+    }
+
+    /* ── Swipe to unlock ── */
+    const track = document.getElementById('swipe-track');
+    const thumb = document.getElementById('swipe-thumb');
+    const fill = document.getElementById('swipe-fill');
+    const maxDrag = track.offsetWidth - 52;
+    let dragging = false, startX = 0, thumbX = 0;
+
+    function onStart(e) {
+      dragging = true;
+      startX = (e.touches ? e.touches[0].clientX : e.clientX) - thumbX;
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      e.preventDefault();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+      thumbX = Math.max(0, Math.min(x, maxDrag));
+      thumb.style.left = thumbX + 4 + 'px';
+      fill.style.width = (thumbX / maxDrag * 100) + '%';
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      if (thumbX >= maxDrag * 0.85) {
+        thumb.style.left = maxDrag + 4 + 'px';
+        fill.style.width = '100%';
+        playSuccess();
+        setTimeout(() => { goTo(2); startAnalysis(); }, 400);
+      } else {
+        thumbX = 0;
+        thumb.style.left = '4px';
+        fill.style.width = '0';
+      }
+    }
+
+    thumb.addEventListener('mousedown', onStart);
+    thumb.addEventListener('touchstart', onStart, { passive: true });
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('touchend', onEnd);
+
+    /* ── AI Analysis ── */
+    function startAnalysis() {
+      const items = document.querySelectorAll('#check-list li');
+      const fillEl = document.getElementById('progress-fill');
+      const pctEl = document.getElementById('progress-pct');
+      let pct = 0;
+
+      items.forEach((li, i) => {
+        setTimeout(() => li.classList.add('show'), 600 + i * 700);
+      });
+
+      const interval = setInterval(() => {
+        pct += Math.random() * 4 + 1;
+        if (pct >= 62) {
+          pct = 62;
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById('ai-status').textContent = 'Análise concluída ✓';
+            setTimeout(() => goTo(3), 600);
+            animateResult();
+          }, 500);
+        }
+        fillEl.style.width = pct + '%';
+        pctEl.textContent = Math.floor(pct) + '%';
+      }, 120);
+    }
+
+    /* ── Result counter ── */
+    function animateResult() {
+      const el = document.getElementById('result-pct');
+      let v = 0;
+      const target = 98.7;
+      const step = () => {
+        v += (target - v) * 0.08;
+        if (v >= target - 0.1) {
+          el.textContent = '98,7%';
+          return;
+        }
+        el.textContent = v.toFixed(1).replace('.', ',') + '%';
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    document.getElementById('btn-to-mission').addEventListener('click', () => goTo(4));
+
+    /* ── Flee button ── */
+    const fleeBtn = document.getElementById('btn-flee');
+    const fleeZone = fleeBtn.parentElement;
+
+    function moveFlee(e) {
+      const rect = fleeZone.getBoundingClientRect();
+      const btnRect = fleeBtn.getBoundingClientRect();
+      const mx = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      const my = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+      const cx = btnRect.left + btnRect.width / 2;
+      const cy = btnRect.top + btnRect.height / 2;
+      const dist = Math.hypot(mx - cx, my - cy);
+      if (dist < 100) {
+        const angle = Math.atan2(cy - my, cx - mx);
+        const nx = Math.cos(angle) * 60;
+        const ny = Math.sin(angle) * 40;
+        fleeBtn.style.position = 'absolute';
+        fleeBtn.style.left = Math.max(0, Math.min(rect.width - btnRect.width, (btnRect.left - rect.left) + nx)) + 'px';
+        fleeBtn.style.top = Math.max(0, Math.min(rect.height - btnRect.height, (btnRect.top - rect.top) + ny)) + 'px';
+        playTone(330, 0.05, 0.03);
+      }
+    }
+
+    fleeZone.addEventListener('mousemove', moveFlee);
+    fleeZone.addEventListener('touchmove', moveFlee, { passive: true });
+
+    /* ── Accept + Confetti ── */
+    document.getElementById('btn-accept').addEventListener('click', () => {
+      playSuccess();
+      launchConfetti();
+      setTimeout(() => goTo(5), 800);
+    });
+
+    /* ── Confetti engine ── */
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let confettiPieces = [];
+    let confettiRunning = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function launchConfetti() {
+      const colors = ['#ff6b9d','#c084fc','#34d399','#fbbf24','#60a5fa','#f472b6'];
+      for (let i = 0; i < 150; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * 100,
+          w: Math.random() * 10 + 5,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 3 + 2,
+          rot: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 10
+        });
+      }
+      if (!confettiRunning) {
+        confettiRunning = true;
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiPieces = confettiPieces.filter(p => p.y < canvas.height + 20);
+      confettiPieces.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (confettiPieces.length > 0) {
+        requestAnimationFrame(animateConfetti);
+      } else {
+        confettiRunning = false;
+      }
+    }
+
+    /* ── Food selection ── */
+    let selectedFood = '';
+    const finishBtn = document.getElementById('btn-finish');
+
+    document.querySelectorAll('.food-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedFood = btn.dataset.food;
+        finishBtn.style.display = 'block';
+        playTone(587, 0.08, 0.05);
+      });
+    });
+
+    finishBtn.addEventListener('click', () => {
+      document.getElementById('chosen-food').textContent =
+        selectedFood ? `Escolha registrada: ${selectedFood}` : '';
+      goTo(6);
+      playSuccess();
+    });
+  </script>
+</body>
+</html>
