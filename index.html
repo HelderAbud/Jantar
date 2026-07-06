@@ -1033,7 +1033,7 @@
       <div class="screen screen-scroll" id="screen-7">
         <div id="calendar-panel">
           <h2 class="cal-title">Quando combina?</h2>
-          <p class="food-subtitle">Toque no melhor dia pra gente<br><span style="font-size:12px;opacity:0.75">Quartas-feiras indisponíveis</span></p>
+          <p class="food-subtitle">Toque no melhor dia pra gente<br><span style="font-size:12px;opacity:0.75">Só após o dia 15 · quartas indisponíveis</span></p>
 
           <div class="calendar glass-card">
             <div class="cal-nav">
@@ -1418,6 +1418,7 @@
     }
 
     function isDaySelectable(d) {
+      if (d.getDate() <= 15) return false; /* só depois do dia 15 */
       if (d.getDay() === 3) return false; /* quartas — Helder indisponível */
       return d >= todayStart && d <= maxDate;
     }
