@@ -1101,7 +1101,7 @@
     for (let i = 0; i < 8; i++) {
       const h = document.createElement('div');
       h.className = 'heart-float';
-      h.textContent = ['😊','💕','✨','💖'][Math.floor(Math.random()*4)];
+      h.textContent = ['😊','✨','😊','✨'][Math.floor(Math.random()*4)];
       h.style.cssText = `left:${Math.random()*100}%;animation-duration:${Math.random()*8+10}s;animation-delay:${Math.random()*12}s;`;
       heartsEl.appendChild(h);
     }
@@ -1404,8 +1404,11 @@
     let calYear, calMonth, selectedDate = null;
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
-    const minDinnerDate = new Date(2026, 6, 16); /* só após 15 de julho de 2026 */
-    minDinnerDate.setHours(0, 0, 0, 0);
+    const MIN_DATE_KEY = 20260716; /* só após 15 de julho de 2026 */
+
+    function dateKey(d) {
+      return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    }
     const maxDate = new Date(todayStart);
     maxDate.setDate(maxDate.getDate() + 60);
 
@@ -1420,7 +1423,7 @@
     }
 
     function isDaySelectable(d) {
-      if (d < minDinnerDate) return false; /* antes de 16/07/2026 */
+      if (dateKey(d) < MIN_DATE_KEY) return false; /* antes de 16/07/2026 */
       if (d.getDay() === 3) return false; /* quartas — Helder indisponível */
       return d >= todayStart && d <= maxDate;
     }
@@ -1511,7 +1514,14 @@
     });
 
     document.getElementById('btn-confirm-date').addEventListener('click', () => {
-      if (!selectedDate) return;
+      if (!selectedDate || !isDaySelectable(selectedDate)) {
+        selectedDate = null;
+        document.getElementById('btn-confirm-date').disabled = true;
+        document.getElementById('cal-hint').textContent =
+          'Escolha um dia a partir de 16 de julho (quartas indisponíveis)';
+        renderCalendar();
+        return;
+      }
       document.getElementById('summary-date').textContent = formatDateLong(selectedDate);
       document.getElementById('summary-food').textContent = selectedFood || 'A combinar';
       document.getElementById('calendar-panel').classList.add('hidden');
