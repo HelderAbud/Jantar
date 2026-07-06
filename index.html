@@ -223,10 +223,13 @@
     .notif-app { font-size: 13px; color: var(--text-muted); }
     .notif-sender { font-weight: 600; font-size: 15px; }
     .notif-body {
-      font-size: 16px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.5;
       margin-top: 6px;
     }
+
+    .notif-body p { margin: 0 0 8px; }
+    .notif-body p:last-child { margin-bottom: 0; }
 
     .swipe-area {
       position: absolute;
@@ -910,7 +913,13 @@
               <div class="notif-sender">Helder</div>
             </div>
           </div>
-          <div class="notif-body">"Tem uma missão para você..."</div>
+          <div class="notif-body">
+            <p>Oi, Alexia 😊</p>
+            <p>Lembra daquele jantar que comentamos?</p>
+            <p>Resolvi fazer um convite um pouco diferente.</p>
+            <p>Você topa jantar comigo?</p>
+            <p>🍷🍝✨</p>
+          </div>
         </div>
 
         <div class="swipe-area">
@@ -965,12 +974,12 @@
 
       <!-- Tela 4: Missão -->
       <div class="screen" id="screen-4">
-        <div class="mission-badge">❤️</div>
+        <div class="mission-badge">😊</div>
         <h2 class="mission-title">Missão desbloqueada</h2>
         <p class="food-subtitle">Você aceita jantar comigo?</p>
         <div class="mission-emoji">🍝🍷✨</div>
 
-        <button class="btn-accept" id="btn-accept">❤️ Aceito</button>
+        <button class="btn-accept" id="btn-accept">😊 Aceito</button>
         <div class="flee-zone" id="flee-zone">
           <span class="btn-flee" id="btn-flee">🙈 Ainda não</span>
         </div>
@@ -978,7 +987,7 @@
 
       <!-- Tela 5: Escolha -->
       <div class="screen" id="screen-5">
-        <div class="confetti-title">❤️ Convite aceito ❤️</div>
+        <div class="confetti-title">😊 Convite aceito 😊</div>
         <p class="food-subtitle">Agora só falta escolher:</p>
 
         <div class="food-grid">
@@ -1000,7 +1009,7 @@
       <div class="screen screen-scroll" id="screen-6">
         <div class="final-icon">📅</div>
         <div class="final-status">Status atualizado</div>
-        <h2 class="final-title">❤️ Jantar desbloqueado</h2>
+        <h2 class="final-title">😊 Jantar desbloqueado</h2>
 
         <div class="final-step glass-card">
           <h3>Quase lá</h3>
@@ -1092,7 +1101,7 @@
     for (let i = 0; i < 8; i++) {
       const h = document.createElement('div');
       h.className = 'heart-float';
-      h.textContent = ['❤️','💕','✨','💖'][Math.floor(Math.random()*4)];
+      h.textContent = ['😊','💕','✨','💖'][Math.floor(Math.random()*4)];
       h.style.cssText = `left:${Math.random()*100}%;animation-duration:${Math.random()*8+10}s;animation-delay:${Math.random()*12}s;`;
       heartsEl.appendChild(h);
     }
@@ -1515,7 +1524,7 @@
       const dateStr = selectedDate ? formatDateLong(selectedDate) : 'A combinar';
       const foodStr = selectedFood || 'A combinar';
       return (
-        'Oi Helder! ❤️\n\n' +
+        'Oi Helder! 😊\n\n' +
         'Aceitei o convite!\n\n' +
         '🍽 Jantar: ' + foodStr + '\n' +
         '📅 Dia: ' + dateStr + '\n\n' +

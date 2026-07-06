@@ -6,7 +6,17 @@ Convite interativo estilo iPhone — mini app HTML para convidar Alexia a um jan
 
 ## O que é
 
-Experiência mobile com 6 telas: bloqueio → IA analisando → resultado → missão → escolha do jantar → confirmação.
+Experiência mobile com 7 telas: bloqueio → IA analisando → resultado → missão → escolha do jantar → promessas → calendário + WhatsApp.
+
+## Mensagem para enviar
+
+Texto pronto em [`mensagem-whatsapp.txt`](mensagem-whatsapp.txt) — copie e cole no WhatsApp antes do link.
+
+### Dicas rápidas
+
+- Manda em um momento tranquilo (não de madrugada).
+- Tom discreto com 😊 em todo o convite e na mensagem.
+- Depois que ela abrir, deixa ela ir no ritmo dela — o convite já guia o resto.
 
 ## Stack
 
