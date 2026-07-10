@@ -1,10 +1,10 @@
 # AGENTS.md — Convite Jantar (Aléxia)
 
-Base operacional alinhada ao **Rheyder Method v1.2** e ao **Superpowers Cursor Playbook**: contexto claro, triagem por risco, plano antes de tarefa relevante, fatias pequenas, validação objetiva e gate humano em mudanças sensíveis ou publicação.
+Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Playbook**: contexto claro, triagem por risco, plano antes de tarefa relevante, fatias pequenas, validação objetiva e gate humano em mudanças sensíveis ou publicação.
 
 **Referências metodológicas (fora do repo):**
 
-- `../Agentes/rheyder-method-v1.2-resumo-compartilhavel.md`
+- `../Agentes/helder-method-v1.2-resumo-compartilhavel.md`
 - `../Skills/superpowers-cursor-playbook.md`
 
 ---
@@ -56,7 +56,7 @@ Não há build, npm ou testes automatizados neste repositório.
 
 ---
 
-## Workflow (Rheyder + Superpowers)
+## Workflow (Helder + Superpowers)
 
 ### Triagem
 
@@ -110,5 +110,5 @@ Pedir aprovação explícita antes de:
 | `AGENTS.md` | Este guia operacional |
 | `.cursor/rules/` | Regras persistentes do Cursor |
 | `.cursor/plans/` | Planos aprovados |
-| `../Agentes/rheyder-method-v1.2-resumo-compartilhavel.md` | Resumo do método |
+| `../Agentes/helder-method-v1.2-resumo-compartilhavel.md` | Resumo do método |
 | `../Skills/superpowers-cursor-playbook.md` | Playbook Superpowers |

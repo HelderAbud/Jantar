@@ -1,6 +1,6 @@
 # Planos — Convite Jantar
 
-Planos aprovados para tarefas **Normal** ou acima (Rheyder Method v1.2).
+Planos aprovados para tarefas **Normal** ou acima (Helder Method v1.2).
 
 ## Convenção de nome
 
@@ -20,6 +20,6 @@ Exemplo: `plan-2026-07-05-ajuste-tela-final.md`
 
 ## Referências
 
-- `../Agentes/rheyder-method-v1.2-resumo-compartilhavel.md`
+- `../Agentes/helder-method-v1.2-resumo-compartilhavel.md`
 - `../../Skills/superpowers-cursor-playbook.md`
 - `../../AGENTS.md`
