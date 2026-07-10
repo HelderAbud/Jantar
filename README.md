@@ -33,7 +33,7 @@ python -m http.server 8080
 
 ## Metodologia
 
-Este projeto usa **Rheyder Method v1.2** + **Superpowers Cursor Playbook**.
+Este projeto usa **Helder Method v1.2** + **Superpowers Cursor Playbook**.
 
 - Guia do agente: [`AGENTS.md`](AGENTS.md)
 - Regras: [`.cursor/rules/`](.cursor/rules/)
