@@ -13,4 +13,5 @@ alwaysApply: false
 - Sons discretos via Web Audio; não depender de autoplay antes do primeiro gesto.
 - Confetes e corações: não degradar FPS perceptivelmente.
 - Preservar tom leve e divertido; evitar textos que soem como pedido formal de namoro.
-- Não expor dados pessoais além de primeiro nomes já acordados (Helder, Alexia).
+- Config personalizada via `#c=` / `#editor`; default sem hash = Helder/Alexia.
+- Não expor dados pessoais além do exemplo default; configs de terceiros só no link gerado.
