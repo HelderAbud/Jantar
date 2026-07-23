@@ -1243,11 +1243,11 @@
 
       <div class="editor-row">
         <div class="editor-field">
-          <label for="ed-from">Seu nome</label>
+          <label for="ed-from">Seu nome (quem convida)</label>
           <input id="ed-from" type="text" maxlength="40" autocomplete="name">
         </div>
         <div class="editor-field">
-          <label for="ed-to">Nome de quem convida</label>
+          <label for="ed-to">Nome de quem você convida</label>
           <input id="ed-to" type="text" maxlength="40">
         </div>
       </div>
@@ -2010,8 +2010,8 @@
           };
         });
 
-      const from = document.getElementById('ed-from').value.trim() || 'Eu';
-      const to = document.getElementById('ed-to').value.trim() || 'Você';
+      const from = document.getElementById('ed-from').value.trim() || DEFAULT_CONFIG.fromName;
+      const to = document.getElementById('ed-to').value.trim() || DEFAULT_CONFIG.toName;
 
       return {
         fromName: from,
