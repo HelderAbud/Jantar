@@ -15,7 +15,7 @@ Links:
 - Demo: https://helderabud.github.io/Jantar/ *(após merge/deploy da branch)*
 - Editor: https://helderabud.github.io/Jantar/?modo=editor
 - Local: http://127.0.0.1:8765/ e http://127.0.0.1:8765/?modo=editor
-- No convite padrão: botão **Criar o meu convite** na tela de bloqueio
+- No convite padrão: botão **Criar o seu convite** na tela de bloqueio
 
 ---
 

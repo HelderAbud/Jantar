@@ -4,9 +4,9 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Ale
 
 **Link:** https://helderabud.github.io/Jantar/
 
-**Criar o meu:** https://helderabud.github.io/Jantar/?modo=editor
+**Crie o seu:** https://helderabud.github.io/Jantar/?modo=editor
 
-(Alternativa com hash: https://helderabud.github.io/Jantar/#editor — no próprio convite use o botão **Criar o meu convite**.)
+(Alternativa com hash: https://helderabud.github.io/Jantar/#editor — no próprio convite use o botão **Criar o seu convite**.)
 
 ## O que é
 
@@ -18,7 +18,7 @@ Sem parâmetros na URL, o site continua com o convite-exemplo Helder → Alexia.
 
 ## Como criar o seu (rápido)
 
-1. Abra `#editor` (ou o botão **Criar o meu convite** na tela de bloqueio).
+1. Abra `#editor` (ou o botão **Criar o seu convite** na tela de bloqueio).
 2. Preencha seu nome, o nome de quem convida, textos e (opcional) WhatsApp com DDI.
 3. Toque em **Copiar link**.
 4. Se o aviso de link longo aparecer, encurte os textos (limite prático ~2000 caracteres para WhatsApp).
