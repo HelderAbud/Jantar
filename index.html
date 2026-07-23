@@ -855,6 +855,157 @@
 
     .hidden { display: none !important; }
 
+    .create-mine-link {
+      display: block;
+      margin: 10px auto 0;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* Editor (full page) */
+    body.editor-open {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    html.editor-open {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body.editor-open .stage,
+    body.editor-open #confetti {
+      display: none !important;
+    }
+
+    #editor-panel {
+      display: none;
+      position: relative;
+      z-index: 20;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+      color: var(--text);
+    }
+
+    body.editor-open #editor-panel {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      max-width: none;
+      margin: 0;
+      padding: 24px 16px 48px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    body.editor-open #editor-panel .editor-card {
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .editor-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 20px 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .editor-card h1 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .editor-card .editor-lead {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .editor-field {
+      margin-bottom: 14px;
+    }
+
+    .editor-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .editor-field input,
+    .editor-field textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      padding: 12px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .editor-field textarea { min-height: 88px; resize: vertical; }
+
+    .editor-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .editor-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .editor-actions .btn-next,
+    .editor-actions .btn-accept {
+      width: 100%;
+    }
+
+    .editor-warn {
+      font-size: 13px;
+      color: #fbbf24;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .editor-warn.show { display: block; }
+
+    .editor-ok {
+      font-size: 13px;
+      color: var(--success);
+      margin-top: 8px;
+      display: none;
+    }
+
+    .editor-ok.show { display: block; }
+
+    .editor-link-box {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 11px;
+      word-break: break-all;
+      color: var(--text-muted);
+      max-height: 96px;
+      overflow: auto;
+    }
+
     /* Confetti canvas */
     #confetti {
       position: fixed;
@@ -910,10 +1061,10 @@
             <div class="notif-icon">🔒</div>
             <div>
               <div class="notif-app">Convite recebido</div>
-              <div class="notif-sender">Helder</div>
+              <div class="notif-sender" id="notif-sender">Helder</div>
             </div>
           </div>
-          <div class="notif-body">
+          <div class="notif-body" id="notif-body">
             <p>Oi, Alexia 😊</p>
             <p>Lembra daquele jantar que comentamos?</p>
             <p>Resolvi fazer um convite um pouco diferente.</p>
@@ -929,6 +1080,7 @@
             <div class="swipe-thumb" id="swipe-thumb">➡️</div>
           </div>
         </div>
+        <button type="button" class="create-mine-link" id="btn-create-mine">Criar o meu convite</button>
       </div>
 
       <!-- Tela 2: IA -->
@@ -964,7 +1116,7 @@
 
         <div class="glass-card observation">
           <div class="obs-label">⚠️ Observação</div>
-          <div class="obs-text">
+          <div class="obs-text" id="result-note">
             A IA detectou que <strong>Helder acha Alexia linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.
           </div>
         </div>
@@ -976,7 +1128,7 @@
       <div class="screen" id="screen-4">
         <div class="mission-badge">😊</div>
         <h2 class="mission-title">Missão desbloqueada</h2>
-        <p class="food-subtitle">Você aceita jantar comigo?</p>
+        <p class="food-subtitle" id="mission-prompt">Você aceita jantar comigo?</p>
         <div class="mission-emoji">🍝🍷✨</div>
 
         <button class="btn-accept" id="btn-accept">😊 Aceito</button>
@@ -990,13 +1142,7 @@
         <div class="confetti-title">😊 Convite aceito 😊</div>
         <p class="food-subtitle">Agora só falta escolher:</p>
 
-        <div class="food-grid">
-          <button class="food-btn" data-food="Pizza 🍕"><span>🍕</span><span>Pizza</span></button>
-          <button class="food-btn" data-food="Churrasco 🥩"><span>🥩</span><span>Churrasco</span></button>
-          <button class="food-btn" data-food="Hamburguer 🍔"><span>🍔</span><span>Hamburguer</span></button>
-          <button class="food-btn" data-food="other" data-other="true"><span>✨</span><span>Outro</span></button>
-          <button class="food-btn chef" data-food="A chef decide 😌"><span>😌</span><span>A chef decide</span></button>
-        </div>
+        <div class="food-grid" id="food-grid"></div>
 
         <div class="food-other-wrap" id="food-other-wrap">
           <input type="text" class="food-other-input" id="food-other-input" placeholder="O que você prefere? 🍽️" maxlength="80">
@@ -1018,7 +1164,7 @@
 
         <div class="glass-card" style="width:100%">
           <h3 style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Prometo:</h3>
-          <ul class="promises">
+          <ul class="promises" id="promises-list">
             <li><span>✔</span> Boa conversa</li>
             <li><span>✔</span> Muitas risadas</li>
             <li><span>✔</span> Sobremesa por minha conta 🍰</li>
@@ -1057,6 +1203,7 @@
           <div class="glass-card calendar-summary">
             <p><strong>Data:</strong> <span id="summary-date"></span></p>
             <p><strong>Jantar:</strong> <span id="summary-food"></span></p>
+            <p id="pickup-line"><strong>Helder:</strong> vou te buscar 😊</p>
           </div>
           <p class="whatsapp-hint">Toque no botão abaixo para me enviar tudo no WhatsApp 😊</p>
           <button type="button" class="btn-whatsapp" id="btn-whatsapp">
@@ -1069,7 +1216,264 @@
     </div>
   </div>
 
+  <div id="editor-panel" aria-hidden="true">
+    <div class="editor-card">
+      <h1>Criar o meu convite</h1>
+      <p class="editor-lead">Preencha os campos, copie o link e envie no WhatsApp. Sem cadastro — tudo fica no link.</p>
+
+      <div class="editor-row">
+        <div class="editor-field">
+          <label for="ed-from">Seu nome</label>
+          <input id="ed-from" type="text" maxlength="40" autocomplete="name">
+        </div>
+        <div class="editor-field">
+          <label for="ed-to">Nome de quem convida</label>
+          <input id="ed-to" type="text" maxlength="40">
+        </div>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-notif">Notificação (uma linha por frase)</label>
+        <textarea id="ed-notif" maxlength="400"></textarea>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-result">Observação da “IA” (tela 3)</label>
+        <textarea id="ed-result" maxlength="280"></textarea>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-mission">Pergunta da missão (tela 4)</label>
+        <input id="ed-mission" type="text" maxlength="120">
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-foods">Opções de comida (até 4; formato: emoji|nome)</label>
+        <textarea id="ed-foods" maxlength="200" placeholder="🍕|Pizza"></textarea>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-promises">Promessas (uma por linha)</label>
+        <textarea id="ed-promises" maxlength="280"></textarea>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-pickup">Frase no resumo (ex.: vou te buscar)</label>
+        <input id="ed-pickup" type="text" maxlength="80">
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-phone">WhatsApp (só números, com DDI — opcional)</label>
+        <input id="ed-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5511999999999">
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-wa">Mensagem WhatsApp (use {from} {to} {food} {date})</label>
+        <textarea id="ed-wa" maxlength="400"></textarea>
+      </div>
+
+      <div class="editor-actions">
+        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link</button>
+        <button type="button" class="btn-next" id="ed-preview">Ver convite →</button>
+        <button type="button" class="create-mine-link" id="ed-back">Voltar ao exemplo Helder/Alexia</button>
+      </div>
+
+      <p class="editor-warn" id="ed-warn">Link longo demais para WhatsApp (~2000 caracteres). Encurte os textos.</p>
+      <p class="editor-ok" id="ed-ok">Link copiado!</p>
+      <div class="editor-link-box" id="ed-link-preview"></div>
+    </div>
+  </div>
+
   <script>
+    /* ── Config (default = Helder → Alexia) ── */
+    const DEFAULT_CONFIG = {
+      fromName: 'Helder',
+      toName: 'Alexia',
+      notifLines: [
+        'Oi, Alexia 😊',
+        'Lembra daquele jantar que comentamos?',
+        'Resolvi fazer um convite um pouco diferente.',
+        'Você topa jantar comigo?',
+        '🍷🍝✨'
+      ],
+      resultNote: 'A IA detectou que <strong>Helder acha Alexia linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
+      missionPrompt: 'Você aceita jantar comigo?',
+      foodOptions: [
+        { emoji: '🍕', label: 'Pizza' },
+        { emoji: '🥩', label: 'Churrasco' },
+        { emoji: '🍔', label: 'Hamburguer' },
+        { emoji: '😌', label: 'A chef decide', chef: true }
+      ],
+      finalPromises: [
+        'Boa conversa',
+        'Muitas risadas',
+        'Sobremesa por minha conta 🍰'
+      ],
+      pickupLine: 'vou te buscar 😊',
+      whatsappPhone: '',
+      whatsappMessageTemplate:
+        'Oi {from}! 😊\n\nAceitei o convite!\n\n🍽 Jantar: {food}\n📅 Dia: {date}\n\nCombinado! Me busca? ✨'
+    };
+
+    const URL_SOFT_LIMIT = 2000;
+    let appConfig = structuredClone
+      ? structuredClone(DEFAULT_CONFIG)
+      : JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+    function toBase64Url(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      bytes.forEach((b) => { bin += String.fromCharCode(b); });
+      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function fromBase64Url(b64) {
+      const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
+      const norm = b64.replace(/-/g, '+').replace(/_/g, '/') + pad;
+      const bin = atob(norm);
+      const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function compactConfig(cfg) {
+      return {
+        f: cfg.fromName,
+        t: cfg.toName,
+        n: cfg.notifLines,
+        r: cfg.resultNote,
+        m: cfg.missionPrompt,
+        o: (cfg.foodOptions || []).slice(0, 4).map((x) => ({
+          e: x.emoji || '🍽️',
+          l: x.label || '',
+          c: x.chef ? 1 : undefined
+        })),
+        p: cfg.finalPromises,
+        k: cfg.pickupLine,
+        w: cfg.whatsappPhone || '',
+        wt: cfg.whatsappMessageTemplate
+      };
+    }
+
+    function expandConfig(raw) {
+      const base = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      if (!raw || typeof raw !== 'object') return base;
+      if (raw.f) base.fromName = String(raw.f).slice(0, 40);
+      if (raw.t) base.toName = String(raw.t).slice(0, 40);
+      if (Array.isArray(raw.n) && raw.n.length) {
+        base.notifLines = raw.n.map((s) => String(s).slice(0, 120)).slice(0, 6);
+      }
+      if (raw.r) base.resultNote = sanitizeNote(raw.r);
+      if (raw.m) base.missionPrompt = String(raw.m).slice(0, 120);
+      if (Array.isArray(raw.o) && raw.o.length) {
+        base.foodOptions = raw.o.slice(0, 4).map((x) => ({
+          emoji: String(x.e || x.emoji || '🍽️').slice(0, 4),
+          label: String(x.l || x.label || '').slice(0, 40),
+          chef: !!(x.c || x.chef)
+        }));
+      }
+      if (Array.isArray(raw.p) && raw.p.length) {
+        base.finalPromises = raw.p.map((s) => String(s).slice(0, 80)).slice(0, 4);
+      }
+      if (raw.k) base.pickupLine = String(raw.k).slice(0, 80);
+      if (raw.w != null) base.whatsappPhone = String(raw.w).replace(/\D/g, '').slice(0, 15);
+      if (raw.wt) base.whatsappMessageTemplate = String(raw.wt).slice(0, 400);
+      return base;
+    }
+
+    function encodeConfig(cfg) {
+      return toBase64Url(JSON.stringify(compactConfig(cfg)));
+    }
+
+    function decodeConfigPayload(payload) {
+      try {
+        return expandConfig(JSON.parse(fromBase64Url(payload)));
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function buildShareUrl(cfg) {
+      const base = location.href.split('#')[0];
+      return base + '#c=' + encodeConfig(cfg);
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function sanitizeNote(html) {
+      return escapeHtml(String(html).slice(0, 400))
+        .replace(/&lt;strong&gt;/gi, '<strong>')
+        .replace(/&lt;\/strong&gt;/gi, '</strong>');
+    }
+
+    function applyConfig(cfg) {
+      appConfig = cfg;
+      document.title = 'Convite de ' + cfg.fromName + ' ✨';
+      const sender = document.getElementById('notif-sender');
+      if (sender) sender.textContent = cfg.fromName;
+
+      const body = document.getElementById('notif-body');
+      if (body) {
+        body.innerHTML = (cfg.notifLines || [])
+          .map((line) => '<p>' + escapeHtml(line) + '</p>')
+          .join('');
+      }
+
+      const note = document.getElementById('result-note');
+      if (note) note.innerHTML = cfg.resultNote;
+
+      const mission = document.getElementById('mission-prompt');
+      if (mission) mission.textContent = cfg.missionPrompt;
+
+      const promises = document.getElementById('promises-list');
+      if (promises) {
+        promises.innerHTML = (cfg.finalPromises || [])
+          .map((p) => '<li><span>✔</span> ' + escapeHtml(p) + '</li>')
+          .join('');
+      }
+
+      const pickup = document.getElementById('pickup-line');
+      if (pickup) {
+        pickup.innerHTML = '<strong>' + escapeHtml(cfg.fromName) + ':</strong> ' + escapeHtml(cfg.pickupLine || '');
+      }
+
+      const waBtn = document.getElementById('btn-whatsapp');
+      if (waBtn) waBtn.textContent = '💬 Enviar pro ' + cfg.fromName;
+
+      renderFoodOptions(cfg.foodOptions || []);
+    }
+
+    function renderFoodOptions(options) {
+      const grid = document.getElementById('food-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      (options || []).slice(0, 4).forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'food-btn' + (opt.chef ? ' chef' : '');
+        const food = (opt.label + ' ' + (opt.emoji || '')).trim();
+        btn.dataset.food = food;
+        btn.innerHTML = '<span>' + escapeHtml(opt.emoji || '🍽️') + '</span><span>' + escapeHtml(opt.label) + '</span>';
+        grid.appendChild(btn);
+      });
+
+      const other = document.createElement('button');
+      other.type = 'button';
+      other.className = 'food-btn';
+      other.dataset.food = 'other';
+      other.dataset.other = 'true';
+      other.innerHTML = '<span>✨</span><span>Outro</span>';
+      grid.appendChild(other);
+
+      bindFoodButtons();
+    }
+
     /* ── Clock ── */
     const months = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
     const weekdays = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
@@ -1369,26 +1773,28 @@
       }
     }
 
-    document.querySelectorAll('.food-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        isOtherFood = btn.dataset.other === 'true';
+    function bindFoodButtons() {
+      document.querySelectorAll('.food-btn').forEach((btn) => {
+        btn.onclick = () => {
+          document.querySelectorAll('.food-btn').forEach((b) => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          isOtherFood = btn.dataset.other === 'true';
 
-        if (isOtherFood) {
-          foodOtherWrap.classList.add('show');
-          foodOtherInput.focus();
-          selectedFood = '';
-        } else {
-          foodOtherWrap.classList.remove('show');
-          foodOtherInput.value = '';
-          selectedFood = btn.dataset.food;
-        }
+          if (isOtherFood) {
+            foodOtherWrap.classList.add('show');
+            foodOtherInput.focus();
+            selectedFood = '';
+          } else {
+            foodOtherWrap.classList.remove('show');
+            foodOtherInput.value = '';
+            selectedFood = btn.dataset.food;
+          }
 
-        updateFinishVisibility();
-        playTone(587, 0.08, 0.05);
+          updateFinishVisibility();
+          playTone(587, 0.08, 0.05);
+        };
       });
-    });
+    }
 
     foodOtherInput.addEventListener('input', updateFinishVisibility);
 
@@ -1531,25 +1937,162 @@
     });
 
     /* ── WhatsApp ── */
-    const WHATSAPP_NUMBER = '5561985035666';
-
     function buildWhatsAppMessage() {
       const dateStr = selectedDate ? formatDateLong(selectedDate) : 'A combinar';
       const foodStr = selectedFood || 'A combinar';
-      return (
-        'Oi Helder! 😊\n\n' +
-        'Aceitei o convite!\n\n' +
-        '🍽 Jantar: ' + foodStr + '\n' +
-        '📅 Dia: ' + dateStr + '\n\n' +
-        'Te vejo lá! ✨'
-      );
+      const tpl = appConfig.whatsappMessageTemplate || DEFAULT_CONFIG.whatsappMessageTemplate;
+      return tpl
+        .split('{from}').join(appConfig.fromName)
+        .split('{to}').join(appConfig.toName)
+        .split('{food}').join(foodStr)
+        .split('{date}').join(dateStr);
     }
 
     document.getElementById('btn-whatsapp').addEventListener('click', () => {
+      const phone = (appConfig.whatsappPhone || '').replace(/\D/g, '');
+      if (!phone) {
+        alert('Este convite não tem WhatsApp configurado. Peça o número a quem te convidou 😊');
+        return;
+      }
       const text = encodeURIComponent(buildWhatsAppMessage());
-      window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + text, '_blank');
+      window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
       playSuccess();
     });
+
+    /* ── Editor ── */
+    function fillEditorForm(cfg) {
+      document.getElementById('ed-from').value = cfg.fromName || '';
+      document.getElementById('ed-to').value = cfg.toName || '';
+      document.getElementById('ed-notif').value = (cfg.notifLines || []).join('\n');
+      document.getElementById('ed-result').value = (cfg.resultNote || '').replace(/<\/?strong>/g, '');
+      document.getElementById('ed-mission').value = cfg.missionPrompt || '';
+      document.getElementById('ed-foods').value = (cfg.foodOptions || [])
+        .map((o) => (o.emoji || '') + '|' + (o.label || '') + (o.chef ? '|chef' : ''))
+        .join('\n');
+      document.getElementById('ed-promises').value = (cfg.finalPromises || []).join('\n');
+      document.getElementById('ed-pickup').value = cfg.pickupLine || '';
+      document.getElementById('ed-phone').value = cfg.whatsappPhone || '';
+      document.getElementById('ed-wa').value = cfg.whatsappMessageTemplate || '';
+    }
+
+    function readEditorForm() {
+      const foods = document.getElementById('ed-foods').value
+        .split('\n')
+        .map((l) => l.trim())
+        .filter(Boolean)
+        .slice(0, 4)
+        .map((line) => {
+          const parts = line.split('|').map((p) => p.trim());
+          return {
+            emoji: parts[0] || '🍽️',
+            label: parts[1] || parts[0] || 'Opção',
+            chef: (parts[2] || '').toLowerCase() === 'chef'
+          };
+        });
+
+      const from = document.getElementById('ed-from').value.trim() || 'Eu';
+      const to = document.getElementById('ed-to').value.trim() || 'Você';
+
+      return {
+        fromName: from,
+        toName: to,
+        notifLines: document.getElementById('ed-notif').value
+          .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 6),
+        resultNote: sanitizeNote(document.getElementById('ed-result').value.trim()),
+        missionPrompt: document.getElementById('ed-mission').value.trim() || 'Você aceita jantar comigo?',
+        foodOptions: foods.length ? foods : DEFAULT_CONFIG.foodOptions,
+        finalPromises: document.getElementById('ed-promises').value
+          .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 4),
+        pickupLine: document.getElementById('ed-pickup').value.trim() || 'vou te buscar 😊',
+        whatsappPhone: document.getElementById('ed-phone').value.replace(/\D/g, '').slice(0, 15),
+        whatsappMessageTemplate: document.getElementById('ed-wa').value.trim()
+          || DEFAULT_CONFIG.whatsappMessageTemplate
+      };
+    }
+
+    function showEditor(show) {
+      document.documentElement.classList.toggle('editor-open', show);
+      document.body.classList.toggle('editor-open', show);
+      const panel = document.getElementById('editor-panel');
+      panel.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (show) {
+        fillEditorForm(appConfig);
+        updateEditorLinkPreview();
+        panel.scrollTop = 0;
+      }
+    }
+
+    function updateEditorLinkPreview() {
+      const cfg = readEditorForm();
+      const url = buildShareUrl(cfg);
+      document.getElementById('ed-link-preview').textContent = url;
+      const warn = document.getElementById('ed-warn');
+      warn.classList.toggle('show', url.length > URL_SOFT_LIMIT);
+      return { cfg, url };
+    }
+
+    ['ed-from','ed-to','ed-notif','ed-result','ed-mission','ed-foods','ed-promises','ed-pickup','ed-phone','ed-wa']
+      .forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', () => {
+          document.getElementById('ed-ok').classList.remove('show');
+          updateEditorLinkPreview();
+        });
+      });
+
+    document.getElementById('ed-copy').addEventListener('click', async () => {
+      const { url } = updateEditorLinkPreview();
+      if (url.length > URL_SOFT_LIMIT) return;
+      try {
+        await navigator.clipboard.writeText(url);
+        document.getElementById('ed-ok').classList.add('show');
+      } catch (_) {
+        prompt('Copie o link:', url);
+      }
+      playChime();
+    });
+
+    document.getElementById('ed-preview').addEventListener('click', () => {
+      const { cfg, url } = updateEditorLinkPreview();
+      if (url.length > URL_SOFT_LIMIT) return;
+      location.hash = 'c=' + encodeConfig(cfg);
+      location.reload();
+    });
+
+    document.getElementById('ed-back').addEventListener('click', () => {
+      location.hash = '';
+      location.reload();
+    });
+
+    document.getElementById('btn-create-mine').addEventListener('click', () => {
+      location.hash = 'editor';
+      showEditor(true);
+    });
+
+    /* ── Boot: hash #c= / #editor ── */
+    function bootFromHash() {
+      const hash = location.hash.slice(1);
+      if (hash === 'editor' || hash.startsWith('editor')) {
+        applyConfig(DEFAULT_CONFIG);
+        showEditor(true);
+        return;
+      }
+      if (hash.startsWith('c=')) {
+        const decoded = decodeConfigPayload(hash.slice(2));
+        applyConfig(decoded || DEFAULT_CONFIG);
+        showEditor(false);
+        return;
+      }
+      applyConfig(DEFAULT_CONFIG);
+      showEditor(false);
+    }
+
+    window.addEventListener('hashchange', () => {
+      if (location.hash.slice(1).startsWith('editor')) showEditor(true);
+      else bootFromHash();
+    });
+
+    bootFromHash();
   </script>
 </body>
 </html>
