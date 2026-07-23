@@ -867,6 +867,26 @@
       padding: 8px;
     }
 
+    .btn-create-mine {
+      display: block;
+      width: calc(100% - 48px);
+      margin: 14px 24px 0;
+      padding: 12px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 20;
+      position: relative;
+    }
+
+    .btn-create-mine:active { transform: scale(0.98); }
+
     /* Editor (full page) */
     body.editor-open {
       overflow: hidden;
@@ -1080,7 +1100,7 @@
             <div class="swipe-thumb" id="swipe-thumb">➡️</div>
           </div>
         </div>
-        <button type="button" class="create-mine-link" id="btn-create-mine">Criar o meu convite</button>
+        <button type="button" class="btn-create-mine" id="btn-create-mine">✨ Criar o seu convite</button>
       </div>
 
       <!-- Tela 2: IA -->
@@ -1218,16 +1238,16 @@
 
   <div id="editor-panel" aria-hidden="true">
     <div class="editor-card">
-      <h1>Criar o meu convite</h1>
+      <h1>Criar o seu convite</h1>
       <p class="editor-lead">Preencha os campos, copie o link e envie no WhatsApp. Sem cadastro — tudo fica no link.</p>
 
       <div class="editor-row">
         <div class="editor-field">
-          <label for="ed-from">Seu nome</label>
+          <label for="ed-from">Seu nome (quem convida)</label>
           <input id="ed-from" type="text" maxlength="40" autocomplete="name">
         </div>
         <div class="editor-field">
-          <label for="ed-to">Nome de quem convida</label>
+          <label for="ed-to">Nome de quem você convida</label>
           <input id="ed-to" type="text" maxlength="40">
         </div>
       </div>
@@ -1990,8 +2010,8 @@
           };
         });
 
-      const from = document.getElementById('ed-from').value.trim() || 'Eu';
-      const to = document.getElementById('ed-to').value.trim() || 'Você';
+      const from = document.getElementById('ed-from').value.trim() || DEFAULT_CONFIG.fromName;
+      const to = document.getElementById('ed-to').value.trim() || DEFAULT_CONFIG.toName;
 
       return {
         fromName: from,
@@ -2060,19 +2080,36 @@
     });
 
     document.getElementById('ed-back').addEventListener('click', () => {
-      location.hash = '';
+      clearEditorMode();
       location.reload();
     });
 
     document.getElementById('btn-create-mine').addEventListener('click', () => {
-      location.hash = 'editor';
-      showEditor(true);
+      openEditorMode();
     });
 
-    /* ── Boot: hash #c= / #editor ── */
+    function openEditorMode() {
+      const url = new URL(location.href);
+      url.searchParams.set('modo', 'editor');
+      url.hash = 'editor';
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+      showEditor(true);
+    }
+
+    function clearEditorMode() {
+      const url = new URL(location.href);
+      url.searchParams.delete('modo');
+      url.hash = '';
+      history.replaceState(null, '', url.pathname + (url.search || '') + url.hash);
+    }
+
+    /* ── Boot: ?modo=editor / #editor / #c= ── */
     function bootFromHash() {
+      const params = new URLSearchParams(location.search);
+      const modo = (params.get('modo') || '').toLowerCase();
       const hash = location.hash.slice(1);
-      if (hash === 'editor' || hash.startsWith('editor')) {
+
+      if (modo === 'editor' || hash === 'editor' || hash.startsWith('editor')) {
         applyConfig(DEFAULT_CONFIG);
         showEditor(true);
         return;
@@ -2088,7 +2125,8 @@
     }
 
     window.addEventListener('hashchange', () => {
-      if (location.hash.slice(1).startsWith('editor')) showEditor(true);
+      const hash = location.hash.slice(1);
+      if (hash === 'editor' || hash.startsWith('editor')) openEditorMode();
       else bootFromHash();
     });
 

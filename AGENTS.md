@@ -27,7 +27,7 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 |------|------------|---------------|
 | Convite (default) | `/` sem config | Config Helder/Alexia |
 | Convite personalizado | `/#c=<payload>` | Lê config Base64URL e aplica nas telas |
-| Editor | `/#editor` ou botão “Criar o meu” | Formulário → copiar link com `#c=` |
+| Editor | `/?modo=editor`, `/#editor` ou botão **Criar o seu convite** | Formulário → copiar link com `#c=` |
 
 ### Campos editáveis (MVP)
 
