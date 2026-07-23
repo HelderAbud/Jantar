@@ -13,8 +13,9 @@ Arquivos de imagem em `docs/linkedin/`:
 Links:
 
 - Demo: https://helderabud.github.io/Jantar/ *(após merge/deploy da branch)*
-- Editor: https://helderabud.github.io/Jantar/#editor
-- Local: http://127.0.0.1:8765/ e http://127.0.0.1:8765/#editor
+- Editor: https://helderabud.github.io/Jantar/?modo=editor
+- Local: http://127.0.0.1:8765/ e http://127.0.0.1:8765/?modo=editor
+- No convite padrão: botão **Criar o meu convite** na tela de bloqueio
 
 ---
 
@@ -45,7 +46,7 @@ Processo: **Helder Method** (contrato claro, fatias pequenas, validação antes 
 
 Quer testar?
 - Abrir o exemplo: https://helderabud.github.io/Jantar/  
-- Criar o seu: https://helderabud.github.io/Jantar/#editor  
+- Criar o seu: https://helderabud.github.io/Jantar/?modo=editor  
 
 Se fizer um para alguém especial, me marca nos comentários — quero ver a criatividade de vocês.
 
@@ -59,7 +60,7 @@ Convite de jantar virou mini-app.
 Você personaliza → gera um link → manda no WhatsApp.  
 Sem backend, sem cadastro.
 
-Teste: https://helderabud.github.io/Jantar/#editor
+Teste: https://helderabud.github.io/Jantar/?modo=editor
 
 ---
 

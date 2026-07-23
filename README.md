@@ -4,7 +4,9 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Ale
 
 **Link:** https://helderabud.github.io/Jantar/
 
-**Criar o meu:** https://helderabud.github.io/Jantar/#editor
+**Criar o meu:** https://helderabud.github.io/Jantar/?modo=editor
+
+(Alternativa com hash: https://helderabud.github.io/Jantar/#editor — no próprio convite use o botão **Criar o meu convite**.)
 
 ## O que é
 
