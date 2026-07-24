@@ -2,11 +2,14 @@
 
 Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Alexia **ou** crie o seu e compartilhe um link.
 
-**Link:** https://helderabud.github.io/Jantar/
+![Convite Jantar — capa](docs/linkedin/linkedin-capa-convite-jantar.png)
 
-**Crie o seu:** https://helderabud.github.io/Jantar/?modo=editor
+## Links
 
-(Alternativa com hash: https://helderabud.github.io/Jantar/#editor — no próprio convite use o botão **Criar o seu convite**.)
+- https://helderabud.github.io/Jantar/
+- https://helderabud.github.io/Jantar/?modo=editor
+
+Kit LinkedIn: [`docs/linkedin/`](docs/linkedin/).
 
 ## O que é
 
