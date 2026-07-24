@@ -1229,6 +1229,7 @@
           <button type="button" class="btn-whatsapp" id="btn-whatsapp">
             💬 Enviar pro Helder
           </button>
+          <button type="button" class="create-mine-link" id="btn-back-editor">← Voltar ao formulário</button>
         </div>
       </div>
 
@@ -1239,7 +1240,7 @@
   <div id="editor-panel" aria-hidden="true">
     <div class="editor-card">
       <h1>Criar o seu convite</h1>
-      <p class="editor-lead">Preencha os campos, copie o link e envie no WhatsApp. Sem cadastro — tudo fica no link.</p>
+      <p class="editor-lead">Preencha os campos, copie o link e envie no WhatsApp. Sem cadastro — o convite vai no próprio link (se só mudar nomes e WhatsApp, o link fica curto).</p>
 
       <div class="editor-row">
         <div class="editor-field">
@@ -1302,12 +1303,12 @@
       <div class="editor-actions">
         <button type="button" class="btn-next" id="ed-preview">Ver convite →</button>
         <button type="button" class="btn-whatsapp" id="ed-send-wa" style="width:100%;margin-top:8px">💬 Enviar link no WhatsApp</button>
-        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link</button>
+        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link curto</button>
         <button type="button" class="create-mine-link" id="ed-back">Voltar ao exemplo Helder/Alexia</button>
       </div>
 
-      <p class="editor-warn" id="ed-warn">Link longo demais para WhatsApp (~2000 caracteres). Encurte os textos.</p>
-      <p class="editor-ok" id="ed-ok">Link copiado!</p>
+      <p class="editor-warn" id="ed-warn">Link longo demais (~2000 caracteres). Deixe os textos padrão ou encurte — só nomes + WhatsApp geram link curto.</p>
+      <p class="editor-ok" id="ed-ok">Link curto copiado!</p>
       <div class="editor-link-box" id="ed-link-preview"></div>
     </div>
   </div>
@@ -1349,6 +1350,46 @@
       ? structuredClone(DEFAULT_CONFIG)
       : JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 
+    /** Textos padrão com os nomes atuais — evita gravar o convite inteiro no link. */
+    function personalizeDefaults(fromName, toName) {
+      const from = fromName || DEFAULT_CONFIG.fromName;
+      const to = toName || DEFAULT_CONFIG.toName;
+      return {
+        fromName: from,
+        toName: to,
+        notifLines: [
+          'Oi, ' + to + ' 😊',
+          'Lembra daquele jantar que comentamos?',
+          'Resolvi fazer um convite um pouco diferente.',
+          'Você topa jantar comigo?',
+          '🍷🍝✨'
+        ],
+        resultNote: 'A IA detectou que <strong>' + from + ' acha ' + to + ' linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
+        missionPrompt: 'Você aceita jantar comigo?',
+        foodOptions: DEFAULT_CONFIG.foodOptions.map((x) => ({
+          emoji: x.emoji,
+          label: x.label,
+          chef: !!x.chef
+        })),
+        finalPromises: DEFAULT_CONFIG.finalPromises.slice(),
+        pickupLine: 'vou te buscar 😊',
+        whatsappMessageTemplate: DEFAULT_CONFIG.whatsappMessageTemplate
+      };
+    }
+
+    function sameJson(a, b) {
+      return JSON.stringify(a) === JSON.stringify(b);
+    }
+
+    function foodsEqual(a, b) {
+      const norm = (arr) => (arr || []).map((x) => ({
+        e: x.emoji || x.e || '',
+        l: x.label || x.l || '',
+        c: !!(x.chef || x.c) ? 1 : 0
+      }));
+      return sameJson(norm(a), norm(b));
+    }
+
     function toBase64Url(str) {
       const bytes = new TextEncoder().encode(str);
       let bin = '';
@@ -1364,31 +1405,55 @@
       return new TextDecoder().decode(bytes);
     }
 
+    /** Só grava no link o que for diferente do modelo padrão (nomes + WhatsApp). */
     function compactConfig(cfg) {
-      return {
+      const expected = personalizeDefaults(cfg.fromName, cfg.toName);
+      const out = {
         f: cfg.fromName,
-        t: cfg.toName,
-        n: cfg.notifLines,
-        r: cfg.resultNote,
-        m: cfg.missionPrompt,
-        o: (cfg.foodOptions || []).slice(0, 4).map((x) => ({
+        t: cfg.toName
+      };
+      if (cfg.whatsappPhone) out.w = cfg.whatsappPhone;
+
+      if (!sameJson(cfg.notifLines || [], expected.notifLines)) {
+        out.n = cfg.notifLines;
+      }
+      if ((cfg.resultNote || '') !== expected.resultNote &&
+          String(cfg.resultNote || '').replace(/<\/?strong>/gi, '') !==
+          expected.resultNote.replace(/<\/?strong>/gi, '')) {
+        out.r = cfg.resultNote;
+      }
+      if ((cfg.missionPrompt || '') !== expected.missionPrompt) {
+        out.m = cfg.missionPrompt;
+      }
+      if (!foodsEqual(cfg.foodOptions, expected.foodOptions)) {
+        out.o = (cfg.foodOptions || []).slice(0, 4).map((x) => ({
           e: x.emoji || '🍽️',
           l: x.label || '',
           c: x.chef ? 1 : undefined
-        })),
-        p: cfg.finalPromises,
-        k: cfg.pickupLine,
-        w: cfg.whatsappPhone || '',
-        /* invitee NÃO vai no link — só serve para "Enviar link no WhatsApp" no editor */
-        wt: cfg.whatsappMessageTemplate
-      };
+        }));
+      }
+      if (!sameJson(cfg.finalPromises || [], expected.finalPromises)) {
+        out.p = cfg.finalPromises;
+      }
+      if ((cfg.pickupLine || '') !== expected.pickupLine) {
+        out.k = cfg.pickupLine;
+      }
+      if ((cfg.whatsappMessageTemplate || '') !== expected.whatsappMessageTemplate) {
+        out.wt = cfg.whatsappMessageTemplate;
+      }
+      return out;
     }
 
     function expandConfig(raw) {
-      const base = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
-      if (!raw || typeof raw !== 'object') return base;
-      if (raw.f) base.fromName = String(raw.f).slice(0, 40);
-      if (raw.t) base.toName = String(raw.t).slice(0, 40);
+      if (!raw || typeof raw !== 'object') {
+        return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      }
+      const from = raw.f ? String(raw.f).slice(0, 40) : DEFAULT_CONFIG.fromName;
+      const to = raw.t ? String(raw.t).slice(0, 40) : DEFAULT_CONFIG.toName;
+      const base = personalizeDefaults(from, to);
+      base.whatsappInvitePhone = '';
+      base.whatsappPhone = '';
+
       if (Array.isArray(raw.n) && raw.n.length) {
         base.notifLines = raw.n.map((s) => String(s).slice(0, 120)).slice(0, 6);
       }
@@ -1416,11 +1481,15 @@
 
     function decodeConfigPayload(payload) {
       try {
-        return expandConfig(JSON.parse(fromBase64Url(payload)));
+        const raw = payload.startsWith('z.') ? null : JSON.parse(fromBase64Url(payload));
+        if (!raw) return null;
+        return expandConfig(raw);
       } catch (_) {
         return null;
       }
     }
+
+    // helpers de compressão removidos do caminho quente — delta já encurta o link
 
     const PUBLIC_SHARE_BASE = 'https://helderabud.github.io/Jantar/';
 
@@ -2001,6 +2070,10 @@
       playSuccess();
     });
 
+    document.getElementById('btn-back-editor').addEventListener('click', () => {
+      openEditorMode();
+    });
+
     /* ── Editor ── */
     function fillEditorForm(cfg) {
       document.getElementById('ed-from').value = cfg.fromName || '';
@@ -2016,6 +2089,129 @@
       document.getElementById('ed-invite-phone').value = cfg.whatsappInvitePhone || '';
       document.getElementById('ed-reply-phone').value = cfg.whatsappPhone || '';
       document.getElementById('ed-wa').value = cfg.whatsappMessageTemplate || '';
+      const fromEl = document.getElementById('ed-from');
+      const toEl = document.getElementById('ed-to');
+      fromEl.dataset.prev = fromEl.value;
+      toEl.dataset.prev = toEl.value;
+    }
+
+    /** Ao mudar só os nomes, atualiza textos padrão → link fica curto. */
+    function looksLikeStandardNotif(lines) {
+      if (!lines || lines.length < 4) return false;
+      return /^Oi,.+😊/.test(lines[0] || '') &&
+        lines[1] === 'Lembra daquele jantar que comentamos?' &&
+        lines[2] === 'Resolvi fazer um convite um pouco diferente.' &&
+        lines[3] === 'Você topa jantar comigo?';
+    }
+
+    function looksLikeStandardResult(note) {
+      const plain = String(note || '').replace(/<\/?strong>/gi, '').trim();
+      return /^A IA detectou que .+ acha .+ linda/.test(plain);
+    }
+
+    function replaceNameTokens(text, prevFrom, prevTo, from, to) {
+      let s = String(text || '');
+      const pairs = [
+        [prevFrom, from],
+        [prevTo, to],
+        [DEFAULT_CONFIG.fromName, from],
+        [DEFAULT_CONFIG.toName, to]
+      ];
+      pairs
+        .filter(([oldN, newN]) => oldN && newN && oldN !== newN)
+        .sort((a, b) => b[0].length - a[0].length)
+        .forEach(([oldN, newN]) => {
+          s = s.split(oldN).join(newN);
+        });
+      return s;
+    }
+
+    function syncPersonalizedEditorFields() {
+      const fromEl = document.getElementById('ed-from');
+      const toEl = document.getElementById('ed-to');
+      const from = fromEl.value.trim();
+      const to = toEl.value.trim();
+      // Não sincroniza no meio da digitação (campo vazio)
+      if (!from || !to) return;
+
+      const prevFrom = (fromEl.dataset.prev || '').trim() || DEFAULT_CONFIG.fromName;
+      const prevTo = (toEl.dataset.prev || '').trim() || DEFAULT_CONFIG.toName;
+      if (from === prevFrom && to === prevTo) return;
+
+      const newP = personalizeDefaults(from, to);
+      const notifEl = document.getElementById('ed-notif');
+      const resultEl = document.getElementById('ed-result');
+      const missionEl = document.getElementById('ed-mission');
+      const pickupEl = document.getElementById('ed-pickup');
+      const waEl = document.getElementById('ed-wa');
+
+      const curNotif = notifEl.value.split('\n').map((s) => s.trim()).filter(Boolean);
+      if (looksLikeStandardNotif(curNotif) || sameJson(curNotif, DEFAULT_CONFIG.notifLines)) {
+        notifEl.value = newP.notifLines.join('\n');
+      } else {
+        notifEl.value = replaceNameTokens(notifEl.value, prevFrom, prevTo, from, to);
+      }
+
+      const curResult = resultEl.value;
+      if (looksLikeStandardResult(curResult) ||
+          curResult.replace(/<\/?strong>/gi, '').trim() ===
+          DEFAULT_CONFIG.resultNote.replace(/<\/?strong>/gi, '').trim()) {
+        resultEl.value = newP.resultNote.replace(/<\/?strong>/gi, '');
+      } else {
+        resultEl.value = replaceNameTokens(curResult, prevFrom, prevTo, from, to);
+      }
+
+      if (missionEl.value.trim() === personalizeDefaults(prevFrom, prevTo).missionPrompt ||
+          missionEl.value.trim() === DEFAULT_CONFIG.missionPrompt ||
+          !missionEl.value.trim()) {
+        missionEl.value = newP.missionPrompt;
+      }
+      if (pickupEl.value.trim() === personalizeDefaults(prevFrom, prevTo).pickupLine ||
+          pickupEl.value.trim() === DEFAULT_CONFIG.pickupLine ||
+          !pickupEl.value.trim()) {
+        pickupEl.value = newP.pickupLine;
+      }
+      if (waEl.value.trim() === personalizeDefaults(prevFrom, prevTo).whatsappMessageTemplate ||
+          waEl.value.trim() === DEFAULT_CONFIG.whatsappMessageTemplate ||
+          !waEl.value.trim()) {
+        waEl.value = newP.whatsappMessageTemplate;
+      }
+
+      fromEl.dataset.prev = from;
+      toEl.dataset.prev = to;
+    }
+
+    /** Garante nomes atuais nos textos antes de gerar o link (copiar / enviar / ver). */
+    function commitEditorNamesForShare() {
+      const fromEl = document.getElementById('ed-from');
+      const toEl = document.getElementById('ed-to');
+      const from = fromEl.value.trim();
+      const to = toEl.value.trim();
+      if (!from || !to) return;
+
+      const expected = personalizeDefaults(from, to);
+      const notifEl = document.getElementById('ed-notif');
+      const resultEl = document.getElementById('ed-result');
+      const lines = notifEl.value.split('\n').map((s) => s.trim()).filter(Boolean);
+
+      // Textos no modelo padrão: regenera com os nomes atuais (corrige Helder/Alexia antigos)
+      if (looksLikeStandardNotif(lines)) {
+        notifEl.value = expected.notifLines.join('\n');
+      } else {
+        const prevFrom = (fromEl.dataset.prev || '').trim() || DEFAULT_CONFIG.fromName;
+        const prevTo = (toEl.dataset.prev || '').trim() || DEFAULT_CONFIG.toName;
+        notifEl.value = replaceNameTokens(notifEl.value, prevFrom, prevTo, from, to);
+      }
+      if (looksLikeStandardResult(resultEl.value)) {
+        resultEl.value = expected.resultNote.replace(/<\/?strong>/gi, '');
+      } else {
+        const prevFrom = (fromEl.dataset.prev || '').trim() || DEFAULT_CONFIG.fromName;
+        const prevTo = (toEl.dataset.prev || '').trim() || DEFAULT_CONFIG.toName;
+        resultEl.value = replaceNameTokens(resultEl.value, prevFrom, prevTo, from, to);
+      }
+
+      fromEl.dataset.prev = from;
+      toEl.dataset.prev = to;
     }
 
     function normalizePhone(v) {
@@ -2044,6 +2240,8 @@
     }
 
     function readEditorForm() {
+      commitEditorNamesForShare();
+
       const foods = document.getElementById('ed-foods').value
         .split('\n')
         .map((l) => l.trim())
@@ -2060,22 +2258,36 @@
 
       const from = document.getElementById('ed-from').value.trim() || DEFAULT_CONFIG.fromName;
       const to = document.getElementById('ed-to').value.trim() || DEFAULT_CONFIG.toName;
+      const expected = personalizeDefaults(from, to);
+
+      let notifLines = document.getElementById('ed-notif').value
+        .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 6);
+      if (!notifLines.length || looksLikeStandardNotif(notifLines)) {
+        notifLines = expected.notifLines;
+      }
+
+      let resultNote = sanitizeNote(document.getElementById('ed-result').value.trim());
+      if (!resultNote || looksLikeStandardResult(resultNote)) {
+        resultNote = expected.resultNote;
+      }
 
       return {
         fromName: from,
         toName: to,
-        notifLines: document.getElementById('ed-notif').value
-          .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 6),
-        resultNote: sanitizeNote(document.getElementById('ed-result').value.trim()),
-        missionPrompt: document.getElementById('ed-mission').value.trim() || 'Você aceita jantar comigo?',
-        foodOptions: foods.length ? foods : DEFAULT_CONFIG.foodOptions,
-        finalPromises: document.getElementById('ed-promises').value
-          .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 4),
-        pickupLine: document.getElementById('ed-pickup').value.trim() || 'vou te buscar 😊',
+        notifLines: notifLines,
+        resultNote: resultNote,
+        missionPrompt: document.getElementById('ed-mission').value.trim() || expected.missionPrompt,
+        foodOptions: foods.length ? foods : expected.foodOptions,
+        finalPromises: (() => {
+          const p = document.getElementById('ed-promises').value
+            .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 4);
+          return p.length ? p : expected.finalPromises;
+        })(),
+        pickupLine: document.getElementById('ed-pickup').value.trim() || expected.pickupLine,
         whatsappInvitePhone: normalizePhone(document.getElementById('ed-invite-phone').value),
         whatsappPhone: normalizePhone(document.getElementById('ed-reply-phone').value),
         whatsappMessageTemplate: document.getElementById('ed-wa').value.trim()
-          || DEFAULT_CONFIG.whatsappMessageTemplate
+          || expected.whatsappMessageTemplate
       };
     }
 
@@ -2100,10 +2312,48 @@
       return { cfg, url };
     }
 
+    /** Encurta o link (CleanURI → is.gd). Sem servidor próprio; se falhar, devolve o longo. */
+    async function shortenShareUrl(longUrl) {
+      try {
+        const res = await fetch('https://cleanuri.com/api/v1/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'url=' + encodeURIComponent(longUrl)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.result_url) return String(data.result_url).trim();
+        }
+      } catch (_) { /* fallback */ }
+
+      try {
+        const res = await fetch(
+          'https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl)
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.shorturl) return String(data.shorturl).trim();
+        }
+      } catch (_) { /* fallback */ }
+
+      return longUrl;
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {
+        prompt('Copie o link:', text);
+        return false;
+      }
+    }
+
     ['ed-from','ed-to','ed-notif','ed-result','ed-mission','ed-foods','ed-promises','ed-pickup','ed-invite-phone','ed-reply-phone','ed-wa']
       .forEach((id) => {
         const el = document.getElementById(id);
         el.addEventListener('input', () => {
+          if (id === 'ed-from' || id === 'ed-to') syncPersonalizedEditorFields();
           document.getElementById('ed-ok').classList.remove('show');
           updateEditorLinkPreview();
         });
@@ -2113,12 +2363,24 @@
       if (!requireEditorPhones()) return;
       const { url } = updateEditorLinkPreview();
       if (url.length > URL_SOFT_LIMIT) return;
-      try {
-        await navigator.clipboard.writeText(url);
-        document.getElementById('ed-ok').classList.add('show');
-      } catch (_) {
-        prompt('Copie o link:', url);
-      }
+
+      const btn = document.getElementById('ed-copy');
+      const ok = document.getElementById('ed-ok');
+      const prevLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Encurtando…';
+      ok.classList.remove('show');
+
+      const shortUrl = await shortenShareUrl(url);
+      document.getElementById('ed-link-preview').textContent = shortUrl;
+      await copyText(shortUrl);
+
+      ok.textContent = shortUrl === url
+        ? 'Link copiado (encurtador indisponível — ficou o completo).'
+        : 'Link curto copiado!';
+      ok.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = prevLabel;
       playChime();
     });
 
@@ -2165,7 +2427,7 @@
       launchInviteFromEditor();
     });
 
-    document.getElementById('ed-send-wa').addEventListener('click', () => {
+    document.getElementById('ed-send-wa').addEventListener('click', async () => {
       const phones = requireEditorPhones();
       if (!phones) return;
       const { cfg, url } = updateEditorLinkPreview();
@@ -2173,9 +2435,14 @@
         alert('Link longo demais. Encurte os textos e tente de novo.');
         return;
       }
+      const btn = document.getElementById('ed-send-wa');
+      const prevLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Encurtando…';
+
+      const shortUrl = await shortenShareUrl(url);
       applyConfig(cfg);
-      const msg = 'Oi! Fiz um convite especial pra você ✨\n\nAbre o link e me responde lá:\n' + url;
-      // Envia para a pessoa convidada; o link já traz o teu número (resposta)
+      const msg = 'Oi! Fiz um convite especial pra você ✨\n\nAbre o link e me responde lá:\n' + shortUrl;
       window.open('https://wa.me/' + phones.invite + '?text=' + encodeURIComponent(msg), '_blank');
       showEditor(false);
       resetInviteToStart();
@@ -2185,6 +2452,8 @@
       } catch (_) {
         history.replaceState(null, '', '#c=' + encodeConfig(cfg));
       }
+      btn.disabled = false;
+      btn.textContent = prevLabel;
       playSuccess();
     });
 
