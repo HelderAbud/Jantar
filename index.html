@@ -1199,7 +1199,7 @@
       <div class="screen screen-scroll" id="screen-7">
         <div id="calendar-panel">
           <h2 class="cal-title">Quando combina?</h2>
-          <p class="food-subtitle">Toque no melhor dia pra gente<br><span style="font-size:12px;opacity:0.75">Só após 15 de julho · quartas indisponíveis</span></p>
+          <p class="food-subtitle">Toque no melhor dia pra gente<br><span style="font-size:12px;opacity:0.75">A partir de hoje · quartas liberadas</span></p>
 
           <div class="calendar glass-card">
             <div class="cal-nav">
@@ -1213,7 +1213,7 @@
             <div class="cal-grid" id="cal-grid"></div>
           </div>
 
-          <div class="cal-hint" id="cal-hint">Selecione um dia disponível</div>
+          <div class="cal-hint" id="cal-hint">Selecione um dia a partir de hoje</div>
           <button class="btn-next" id="btn-confirm-date" disabled>Confirmar dia ✨</button>
         </div>
 
@@ -1283,18 +1283,26 @@
       </div>
 
       <div class="editor-field">
-        <label for="ed-phone">WhatsApp (só números, com DDI — opcional)</label>
-        <input id="ed-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5511999999999">
+        <label for="ed-invite-phone">WhatsApp da pessoa convidada (obrigatório — DDI + só números)</label>
+        <input id="ed-invite-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5561999999999" required>
+        <p class="whatsapp-hint" style="margin:6px 0 0;text-align:left">Quem recebe o link do convite. Ex.: 55 + DDD + número.</p>
       </div>
 
       <div class="editor-field">
-        <label for="ed-wa">Mensagem WhatsApp (use {from} {to} {food} {date})</label>
+        <label for="ed-reply-phone">Teu WhatsApp — receber resposta (obrigatório — DDI + só números)</label>
+        <input id="ed-reply-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5561888888888" required>
+        <p class="whatsapp-hint" style="margin:6px 0 0;text-align:left">Quem criou o convite. No fim, a pessoa responde pra este número (comida + data).</p>
+      </div>
+
+      <div class="editor-field">
+        <label for="ed-wa">Mensagem WhatsApp no fim do convite (use {from} {to} {food} {date})</label>
         <textarea id="ed-wa" maxlength="400"></textarea>
       </div>
 
       <div class="editor-actions">
-        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link</button>
         <button type="button" class="btn-next" id="ed-preview">Ver convite →</button>
+        <button type="button" class="btn-whatsapp" id="ed-send-wa" style="width:100%;margin-top:8px">💬 Enviar link no WhatsApp</button>
+        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link</button>
         <button type="button" class="create-mine-link" id="ed-back">Voltar ao exemplo Helder/Alexia</button>
       </div>
 
@@ -1330,7 +1338,8 @@
         'Sobremesa por minha conta 🍰'
       ],
       pickupLine: 'vou te buscar 😊',
-      whatsappPhone: '',
+      whatsappInvitePhone: '', /* pessoa convidada — só no editor (enviar link) */
+      whatsappPhone: '',       /* quem criou — resposta no fim do convite (vai no #c=) */
       whatsappMessageTemplate:
         'Oi {from}! 😊\n\nAceitei o convite!\n\n🍽 Jantar: {food}\n📅 Dia: {date}\n\nCombinado! Me busca? ✨'
     };
@@ -1370,6 +1379,7 @@
         p: cfg.finalPromises,
         k: cfg.pickupLine,
         w: cfg.whatsappPhone || '',
+        /* invitee NÃO vai no link — só serve para "Enviar link no WhatsApp" no editor */
         wt: cfg.whatsappMessageTemplate
       };
     }
@@ -1412,9 +1422,26 @@
       }
     }
 
+    const PUBLIC_SHARE_BASE = 'https://helderabud.github.io/Jantar/';
+
+    function isLocalHost() {
+      const h = location.hostname;
+      return location.protocol === 'file:' || h === 'localhost' || h === '127.0.0.1';
+    }
+
+    /** Link para copiar / WhatsApp — sempre o site público (não localhost). */
     function buildShareUrl(cfg) {
-      const base = location.href.split('#')[0];
-      return base + '#c=' + encodeConfig(cfg);
+      const base = isLocalHost()
+        ? PUBLIC_SHARE_BASE
+        : (location.origin + location.pathname.replace(/\/index\.html$/i, '/'));
+      const root = base.endsWith('/') ? base : base + '/';
+      return root + '#c=' + encodeConfig(cfg);
+    }
+
+    /** Pré-visualização local (Ver convite) — fica no host atual. */
+    function buildPreviewUrl(cfg) {
+      const path = location.pathname.replace(/\/index\.html$/i, '/');
+      return location.origin + (path.endsWith('/') ? path : path + '/') + '#c=' + encodeConfig(cfg);
     }
 
     function escapeHtml(s) {
@@ -1464,6 +1491,14 @@
 
       const waBtn = document.getElementById('btn-whatsapp');
       if (waBtn) waBtn.textContent = '💬 Enviar pro ' + cfg.fromName;
+
+      const waHint = document.querySelector('.whatsapp-hint');
+      if (waHint && waHint.closest('#calendar-done')) {
+        const phone = (cfg.whatsappPhone || '').replace(/\D/g, '');
+        waHint.textContent = phone
+          ? ('Toque para enviar a resposta no WhatsApp (' + phone + ') 😊')
+          : 'Toque no botão abaixo para enviar tudo no WhatsApp 😊';
+      }
 
       renderFoodOptions(cfg.foodOptions || []);
     }
@@ -1830,13 +1865,6 @@
     let calYear, calMonth, selectedDate = null;
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
-    const MIN_DATE_KEY = 20260716; /* só após 15 de julho de 2026 */
-
-    function dateKey(d) {
-      return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-    }
-    const maxDate = new Date(todayStart);
-    maxDate.setDate(maxDate.getDate() + 60);
 
     function formatDateLong(d) {
       return `${weekdays[d.getDay()]}, ${d.getDate()} de ${months[d.getMonth()]}`;
@@ -1849,9 +1877,7 @@
     }
 
     function isDaySelectable(d) {
-      if (dateKey(d) < MIN_DATE_KEY) return false; /* antes de 16/07/2026 */
-      if (d.getDay() === 3) return false; /* quartas — Helder indisponível */
-      return d >= todayStart && d <= maxDate;
+      return d >= todayStart; /* a partir de hoje */
     }
 
     function renderCalendar() {
@@ -1903,16 +1929,13 @@
 
       const now = new Date();
       prevBtn.disabled = calYear === now.getFullYear() && calMonth === now.getMonth();
-
-      const lastOfMonth = new Date(calYear, calMonth + 1, 0);
-      nextBtn.disabled = lastOfMonth < todayStart ||
-        (calYear === maxDate.getFullYear() && calMonth >= maxDate.getMonth());
+      nextBtn.disabled = false;
     }
 
     function initCalendar() {
       selectedDate = null;
       document.getElementById('btn-confirm-date').disabled = true;
-      document.getElementById('cal-hint').textContent = 'Selecione um dia disponível';
+      document.getElementById('cal-hint').textContent = 'Selecione um dia a partir de hoje';
       document.getElementById('calendar-panel').classList.remove('hidden');
       document.getElementById('calendar-done').classList.add('hidden');
 
@@ -1943,8 +1966,7 @@
       if (!selectedDate || !isDaySelectable(selectedDate)) {
         selectedDate = null;
         document.getElementById('btn-confirm-date').disabled = true;
-        document.getElementById('cal-hint').textContent =
-          'Escolha um dia a partir de 16 de julho (quartas indisponíveis)';
+        document.getElementById('cal-hint').textContent = 'Selecione um dia a partir de hoje';
         renderCalendar();
         return;
       }
@@ -1991,8 +2013,34 @@
         .join('\n');
       document.getElementById('ed-promises').value = (cfg.finalPromises || []).join('\n');
       document.getElementById('ed-pickup').value = cfg.pickupLine || '';
-      document.getElementById('ed-phone').value = cfg.whatsappPhone || '';
+      document.getElementById('ed-invite-phone').value = cfg.whatsappInvitePhone || '';
+      document.getElementById('ed-reply-phone').value = cfg.whatsappPhone || '';
       document.getElementById('ed-wa').value = cfg.whatsappMessageTemplate || '';
+    }
+
+    function normalizePhone(v) {
+      return String(v || '').replace(/\D/g, '').slice(0, 15);
+    }
+
+    function isValidPhone(p) {
+      return normalizePhone(p).length >= 10;
+    }
+
+    /** Valida os 2 números; devolve { invite, reply } ou null + foca o campo. */
+    function requireEditorPhones() {
+      const invite = normalizePhone(document.getElementById('ed-invite-phone').value);
+      const reply = normalizePhone(document.getElementById('ed-reply-phone').value);
+      if (!isValidPhone(invite)) {
+        alert('Coloca o WhatsApp da pessoa convidada (com DDI, só números).\nEx.: 5561999999999');
+        document.getElementById('ed-invite-phone').focus();
+        return null;
+      }
+      if (!isValidPhone(reply)) {
+        alert('Coloca o teu WhatsApp para receber a resposta (com DDI, só números).\nEx.: 5561888888888');
+        document.getElementById('ed-reply-phone').focus();
+        return null;
+      }
+      return { invite, reply };
     }
 
     function readEditorForm() {
@@ -2024,7 +2072,8 @@
         finalPromises: document.getElementById('ed-promises').value
           .split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 4),
         pickupLine: document.getElementById('ed-pickup').value.trim() || 'vou te buscar 😊',
-        whatsappPhone: document.getElementById('ed-phone').value.replace(/\D/g, '').slice(0, 15),
+        whatsappInvitePhone: normalizePhone(document.getElementById('ed-invite-phone').value),
+        whatsappPhone: normalizePhone(document.getElementById('ed-reply-phone').value),
         whatsappMessageTemplate: document.getElementById('ed-wa').value.trim()
           || DEFAULT_CONFIG.whatsappMessageTemplate
       };
@@ -2051,7 +2100,7 @@
       return { cfg, url };
     }
 
-    ['ed-from','ed-to','ed-notif','ed-result','ed-mission','ed-foods','ed-promises','ed-pickup','ed-phone','ed-wa']
+    ['ed-from','ed-to','ed-notif','ed-result','ed-mission','ed-foods','ed-promises','ed-pickup','ed-invite-phone','ed-reply-phone','ed-wa']
       .forEach((id) => {
         const el = document.getElementById(id);
         el.addEventListener('input', () => {
@@ -2061,6 +2110,7 @@
       });
 
     document.getElementById('ed-copy').addEventListener('click', async () => {
+      if (!requireEditorPhones()) return;
       const { url } = updateEditorLinkPreview();
       if (url.length > URL_SOFT_LIMIT) return;
       try {
@@ -2072,11 +2122,70 @@
       playChime();
     });
 
-    document.getElementById('ed-preview').addEventListener('click', () => {
+    function resetInviteToStart() {
+      // Volta para a tela 1 e reinicia o desbloqueio
+      document.querySelectorAll('.screen').forEach((el) => el.classList.remove('active'));
+      currentScreen = 1;
+      document.getElementById('screen-1').classList.add('active');
+      dragging = false;
+      thumbX = 0;
+      thumb.style.left = '4px';
+      fill.style.width = '0';
+      document.getElementById('calendar-done').classList.add('hidden');
+      selectedFood = '';
+      selectedDate = null;
+      isOtherFood = false;
+      document.querySelectorAll('#check-list li').forEach((li) => li.classList.remove('show'));
+      const fillEl = document.getElementById('progress-fill');
+      const pctEl = document.getElementById('progress-pct');
+      if (fillEl) fillEl.style.width = '0%';
+      if (pctEl) pctEl.textContent = '0%';
+      document.querySelectorAll('.food-btn').forEach((b) => b.classList.remove('selected'));
+      const otherWrap = document.getElementById('food-other-wrap');
+      if (otherWrap) otherWrap.classList.remove('show');
+      const finish = document.getElementById('btn-finish');
+      if (finish) finish.style.display = 'none';
+    }
+
+    function launchInviteFromEditor() {
+      if (!requireEditorPhones()) return null;
       const { cfg, url } = updateEditorLinkPreview();
-      if (url.length > URL_SOFT_LIMIT) return;
-      location.hash = 'c=' + encodeConfig(cfg);
-      location.reload();
+      if (url.length > URL_SOFT_LIMIT) {
+        alert('Link longo demais. Encurte os textos e tente de novo.');
+        return null;
+      }
+      applyConfig(cfg);
+      playChime();
+      // Preview no host atual (localhost ou Pages); o link copiado/enviado é sempre o público
+      location.replace(buildPreviewUrl(cfg));
+      return { cfg, url, invite: cfg.whatsappInvitePhone, reply: cfg.whatsappPhone };
+    }
+
+    document.getElementById('ed-preview').addEventListener('click', () => {
+      launchInviteFromEditor();
+    });
+
+    document.getElementById('ed-send-wa').addEventListener('click', () => {
+      const phones = requireEditorPhones();
+      if (!phones) return;
+      const { cfg, url } = updateEditorLinkPreview();
+      if (url.length > URL_SOFT_LIMIT) {
+        alert('Link longo demais. Encurte os textos e tente de novo.');
+        return;
+      }
+      applyConfig(cfg);
+      const msg = 'Oi! Fiz um convite especial pra você ✨\n\nAbre o link e me responde lá:\n' + url;
+      // Envia para a pessoa convidada; o link já traz o teu número (resposta)
+      window.open('https://wa.me/' + phones.invite + '?text=' + encodeURIComponent(msg), '_blank');
+      showEditor(false);
+      resetInviteToStart();
+      try {
+        const preview = new URL(buildPreviewUrl(cfg));
+        history.replaceState(null, '', preview.pathname + preview.hash);
+      } catch (_) {
+        history.replaceState(null, '', '#c=' + encodeConfig(cfg));
+      }
+      playSuccess();
     });
 
     document.getElementById('ed-back').addEventListener('click', () => {
@@ -2109,15 +2218,16 @@
       const modo = (params.get('modo') || '').toLowerCase();
       const hash = location.hash.slice(1);
 
-      if (modo === 'editor' || hash === 'editor' || hash.startsWith('editor')) {
-        applyConfig(DEFAULT_CONFIG);
-        showEditor(true);
-        return;
-      }
+      // #c= tem prioridade (convite personalizado), mesmo se ?modo=editor sobrar na URL
       if (hash.startsWith('c=')) {
         const decoded = decodeConfigPayload(hash.slice(2));
         applyConfig(decoded || DEFAULT_CONFIG);
         showEditor(false);
+        return;
+      }
+      if (modo === 'editor' || hash === 'editor' || hash.startsWith('editor')) {
+        applyConfig(DEFAULT_CONFIG);
+        showEditor(true);
         return;
       }
       applyConfig(DEFAULT_CONFIG);
