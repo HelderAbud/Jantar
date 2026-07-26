@@ -6,8 +6,11 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Ale
 
 ## Links
 
-- https://helderabud.github.io/Jantar/
-- https://helderabud.github.io/Jantar/?modo=editor
+| Uso | URL |
+|-----|-----|
+| Demo (exemplo Helder → Alexia) | https://helderabud.github.io/Jantar/ |
+| Editor (criar o seu) | https://helderabud.github.io/Jantar/?modo=editor |
+| Local | http://localhost:8080/ e http://localhost:8080/?modo=editor |
 
 Kit LinkedIn: [`docs/linkedin/`](docs/linkedin/).
 
@@ -15,21 +18,30 @@ Kit LinkedIn: [`docs/linkedin/`](docs/linkedin/).
 
 Experiência mobile com telas: bloqueio → IA → resultado → missão → escolha do jantar → promessas → calendário + WhatsApp.
 
-Qualquer pessoa pode preencher nomes e textos no **editor**, copiar um link (`#c=...`) e enviar no WhatsApp. **Sem cadastro e sem servidor** — a configuração vai no próprio link.
+Qualquer pessoa pode preencher nomes e textos no **editor**, gerar um link (`#c=...`) e enviar no WhatsApp. **Sem cadastro e sem backend próprio** — a configuração vai no próprio link (opcionalmente encurtado via serviço externo ao copiar/enviar).
 
-Sem parâmetros na URL, o site continua com o convite-exemplo Helder → Alexia.
+Sem `#c=` na URL, o site continua com o convite-exemplo Helder → Alexia.
 
 ## Como criar o seu (rápido)
 
-1. Abra `#editor` (ou o botão **Criar o seu convite** na tela de bloqueio).
-2. Preencha seu nome, o nome de quem convida, textos e (opcional) WhatsApp com DDI.
-3. Toque em **Copiar link**.
-4. Se o aviso de link longo aparecer, encurte os textos (limite prático ~2000 caracteres para WhatsApp).
-5. Cole o link no WhatsApp.
+1. Abra [/?modo=editor](https://helderabud.github.io/Jantar/?modo=editor) (ou o botão **Criar o seu convite** na tela de bloqueio).
+2. Preencha **seu nome** (quem convida) e o **nome de quem você convida**.
+3. Informe os **dois WhatsApps** (obrigatórios, só números com DDI):
+   - da pessoa convidada (recebe o link);
+   - o seu (recebe a resposta no fim do convite).
+4. Ajuste textos se quiser (se deixar o modelo padrão, o link fica bem mais curto).
+5. Use **Ver convite** para pré-visualizar, **Copiar link curto** ou **Enviar link no WhatsApp**.
 
 Opções de comida no editor: uma por linha no formato `emoji|nome` (ex.: `🍕|Pizza`). Use `|chef` na última coluna se quiser o estilo “chef decide”.
 
-Placeholders da mensagem WhatsApp: `{from}` `{to}` `{food}` `{date}`.
+Placeholders da mensagem WhatsApp final: `{from}` `{to}` `{food}` `{date}`.
+
+### Dicas de link
+
+- Só nomes + WhatsApps (textos padrão) → link curto no `#c=`.
+- **Copiar link curto** / **Enviar** tentam encurtar (CleanURI; se falhar, usam o link completo do Pages).
+- Limite prático ~2000 caracteres; o editor avisa se passar.
+- Quem tem o link (incluindo `#c=`) vê o conteúdo: trate como semi-público.
 
 ## Mensagem para enviar (exemplo Helder/Alexia)
 
@@ -40,22 +52,24 @@ Texto pronto em [`mensagem-whatsapp.txt`](mensagem-whatsapp.txt) — copie e col
 - Manda em um momento tranquilo (não de madrugada).
 - Tom discreto com 😊 em todo o convite e na mensagem.
 - Depois que a pessoa abrir, deixa ir no ritmo dela — o convite já guia o resto.
-- Quem tem o link (incluindo `#c=`) vê o conteúdo: trate como semi-público.
 
 ## Stack
 
 - HTML + CSS + JavaScript (arquivo único: `index.html`)
-- GitHub Pages
-- Config compartilhável: JSON compacto → Base64URL no hash `#c=`
+- GitHub Pages (`Main`)
+- Config compartilhável: JSON compacto (delta) → Base64URL no hash `#c=`
+- Encurtador opcional no cliente (sem servidor próprio)
 
 ## Desenvolvimento
 
 ```bash
-# Local
+# Na raiz do repositório
 python -m http.server 8080
-# Abrir http://localhost:8080
-# Editor: http://localhost:8080/#editor
+# Convite:  http://localhost:8080/
+# Editor:   http://localhost:8080/?modo=editor
 ```
+
+Alias ainda aceito: `/#editor` (preferir `/?modo=editor`).
 
 ## Metodologia
 
