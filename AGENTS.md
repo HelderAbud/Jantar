@@ -27,7 +27,9 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 |------|------------|---------------|
 | Convite (default) | `/` sem config | Config Helder/Alexia |
 | Convite personalizado | `/#c=<payload>` | Lê config Base64URL e aplica nas telas |
-| Editor | `/?modo=editor`, `/#editor` ou botão **Criar o seu convite** | Formulário → copiar link com `#c=` |
+| Editor | `/?modo=editor` (canónico), `/#editor` (alias) ou botão **Criar o seu convite** | Formulário → Ver / Copiar link curto / Enviar WA |
+
+Boot: se existir `#c=`, tem prioridade sobre `?modo=editor` (convite personalizado não reabre o form).
 
 ### Campos editáveis (MVP)
 
@@ -37,15 +39,20 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 - `missionPrompt` (tela 4)
 - `foodOptions` (até 4 opções curtas, tela 5; “Outro” permanece fixo na UI)
 - `finalPromises` (2–4, tela 6)
-- `whatsappPhone` (só dígitos, opcional)
+- `whatsappInvitePhone` — convidada (só no editor; Enviar link no WhatsApp)
+- `whatsappPhone` — criador (vai no `#c=`; botão final `wa.me`)
 - `whatsappMessageTemplate` com `{from}` `{to}` `{food}` `{date}`
 - `pickupLine` — linha no resumo do calendário (ex.: “vou te buscar”)
 
-Fora do MVP: temas, upload de foto, calendário avançado customizável, analytics, backend.
+Calendário: datas a partir de **hoje** (incluindo quartas).
+
+Fora do MVP: temas, upload de foto, calendário avançado customizável, analytics, backend próprio.
 
 ### Encoding
 
-JSON mínimo → Base64URL no hash `#c=...`. Limite prático ~2000 caracteres; o editor avisa se o link ficar longo demais para WhatsApp.
+JSON em **delta** (só o que difere do modelo com os nomes atuais) → Base64URL no hash `#c=...`.  
+Só nomes + WhatsApp do criador → link curto. Limite prático ~2000 caracteres; o editor avisa se passar.  
+Copiar/Enviar tentam encurtar via CleanURI (fallback is.gd / link completo).
 
 ---
 
@@ -69,8 +76,9 @@ Mudanças no fluxo, textos-base ou interações devem atualizar este contrato (o
 
 | Objetivo | Como |
 |----------|------|
-| Ver localmente | Abrir `index.html` no navegador ou `python -m http.server 8080` na raiz |
-| Editor local | Abrir com `#editor` |
+| Ver localmente | `python -m http.server 8080` na raiz → http://localhost:8080/ |
+| Editor local | http://localhost:8080/?modo=editor |
+| Editor público | https://helderabud.github.io/Jantar/?modo=editor |
 | Publicar | Branch → PR → merge em `Main` → GitHub Pages |
 | Status Pages | `gh api repos/HelderAbud/Jantar/pages --jq '{status, html_url}'` |
 
@@ -127,7 +135,8 @@ Pedir aprovação explícita antes de:
 
 - Abrir no Chrome mobile ou Safari iOS (DevTools → modo responsivo como smoke).
 - Testar: deslize, barra, botão que foge, confetes, comida, calendário, WhatsApp.
-- Testar `#editor` → copiar link → abrir `#c=` com nomes diferentes.
+- Smoke editor: `/?modo=editor` → 2 WhatsApps → Ver convite (não volta ao form) → Copiar link curto → `#c=` com nomes novos → Enviar WA (convidada) → fim do fluxo WA (criador) → Voltar ao formulário.
+- Calendário: passado bloqueado; hoje+ e quartas ok.
 - Sem hash: fluxo Helder/Alexia intacto.
 - Após push: confirmar https://helderabud.github.io/Jantar/ (status `built`).
 - Antes de concluir: explicar o que foi verificado e riscos residuais.

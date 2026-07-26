@@ -10,11 +10,11 @@ Arquivos de imagem em `docs/linkedin/`:
 | 3 | `linkedin-slide-3-editor.png` | Carrossel |
 | 4 | `linkedin-slide-4-cta.png` | Carrossel (CTA) |
 
-Links:
+Links (canónicos):
 
-- Demo: https://helderabud.github.io/Jantar/ *(após merge/deploy da branch)*
+- Demo: https://helderabud.github.io/Jantar/
 - Editor: https://helderabud.github.io/Jantar/?modo=editor
-- Local: http://127.0.0.1:8765/ e http://127.0.0.1:8765/?modo=editor
+- Local: http://localhost:8080/ e http://localhost:8080/?modo=editor
 - No convite padrão: botão **Criar o seu convite** na tela de bloqueio
 
 ---
@@ -31,7 +31,7 @@ Criei o **Convite Jantar**: um mini-app no celular (estilo iPhone) em que a pess
 
 Agora qualquer pessoa pode **personalizar** nomes e textos num formulário simples, **gerar um link** e mandar no WhatsApp.
 
-Sem cadastro. Sem backend. Sem app store.  
+Sem cadastro. Sem backend próprio. Sem app store.  
 A configuração viaja no próprio link (`#c=`).
 
 O que você vê no fluxo:
@@ -58,7 +58,7 @@ Se fizer um para alguém especial, me marca nos comentários — quero ver a cri
 
 Convite de jantar virou mini-app.  
 Você personaliza → gera um link → manda no WhatsApp.  
-Sem backend, sem cadastro.
+Sem backend próprio, sem cadastro.
 
 Teste: https://helderabud.github.io/Jantar/?modo=editor
 
@@ -69,18 +69,21 @@ Teste: https://helderabud.github.io/Jantar/?modo=editor
 1. Novo post → **Adicionar documento/imagem** ou carrossel.  
 2. Suba os 4 slides na ordem 1→4 (ou só a capa 16:9).  
 3. Cole o **texto principal**.  
-4. Se o deploy do editor ainda não estiver no ar, diga no post que o link público sobe após o merge — ou use o local só para demo em vídeo.
+4. Links públicos já estão no ar (Pages em `Main`).
 
-## Checklist de testes (2026-07-23)
+## Checklist de testes
 
-- [x] Servidor local responde em :8765  
-- [x] Default sem telefone pessoal no código  
-- [x] Editor (`#editor`) + scroll  
-- [x] Encode/decode `#c=` (roundtrip)  
-- [x] Limite ~2000 chars, placeholders WhatsApp  
-- [ ] Validação manual no celular (você): deslize, botão que foge, copiar link, abrir `#c=`  
-- [ ] Deploy Pages após PR/merge  
+### 2026-07-25 (smoke pós PR #7) — OK
 
-## Nota de privacidade
+- [x] Pages `built` com editor, 2 WhatsApps, link curto, delta `#c=`
+- [x] Local `:8080` / `/?modo=editor`
+- [x] Ver convite com nomes novos (não volta ao form)
+- [x] Copiar link curto → mesmos nomes
+- [x] Enviar link WA → chat da convidada
+- [x] Fim do fluxo → WA do criador
+- [x] Voltar ao formulário na última tela
+- [x] Calendário: passado bloqueado; hoje+ e quartas ok
+
+### Privacidade no post
 
 Não publique no LinkedIn prints com telefone real, nomes íntimos ou o link `#c=` com dados pessoais de terceiros.
