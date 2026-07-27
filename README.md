@@ -10,7 +10,7 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Ale
 |-----|-----|
 | Demo (exemplo Helder → Alexia) | https://helderabud.github.io/Jantar/ |
 | Editor (criar o seu) | https://helderabud.github.io/Jantar/?modo=editor |
-| Local | http://localhost:8080/ e http://localhost:8080/?modo=editor |
+| Local | http://localhost:5177/ e http://localhost:5177/?modo=editor |
 
 Kit LinkedIn: [`docs/linkedin/`](docs/linkedin/).
 
@@ -64,10 +64,12 @@ Texto pronto em [`mensagem-whatsapp.txt`](mensagem-whatsapp.txt) — copie e col
 
 ```bash
 # Na raiz do repositório
-python -m http.server 8080
-# Convite:  http://localhost:8080/
-# Editor:   http://localhost:8080/?modo=editor
+python -m http.server 5177
+# Convite:  http://localhost:5177/
+# Editor:   http://localhost:5177/?modo=editor
 ```
+
+Porta canônica do portfólio: **5177** (evita colisão com outros projetos locais na 8080).
 
 Alias ainda aceito: `/#editor` (preferir `/?modo=editor`).
 
