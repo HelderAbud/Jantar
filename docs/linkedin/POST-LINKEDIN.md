@@ -14,7 +14,7 @@ Links (canónicos):
 
 - Demo: https://helderabud.github.io/Jantar/
 - Editor: https://helderabud.github.io/Jantar/?modo=editor
-- Local: http://localhost:8080/ e http://localhost:8080/?modo=editor
+- Local: http://localhost:5177/ e http://localhost:5177/?modo=editor
 - No convite padrão: botão **Criar o seu convite** na tela de bloqueio
 
 ---
@@ -76,7 +76,7 @@ Teste: https://helderabud.github.io/Jantar/?modo=editor
 ### 2026-07-25 (smoke pós PR #7) — OK
 
 - [x] Pages `built` com editor, 2 WhatsApps, link curto, delta `#c=`
-- [x] Local `:8080` / `/?modo=editor`
+- [x] Local `:5177` / `/?modo=editor`
 - [x] Ver convite com nomes novos (não volta ao form)
 - [x] Copiar link curto → mesmos nomes
 - [x] Enviar link WA → chat da convidada

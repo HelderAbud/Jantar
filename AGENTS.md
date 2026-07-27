@@ -76,8 +76,8 @@ Mudanças no fluxo, textos-base ou interações devem atualizar este contrato (o
 
 | Objetivo | Como |
 |----------|------|
-| Ver localmente | `python -m http.server 8080` na raiz → http://localhost:8080/ |
-| Editor local | http://localhost:8080/?modo=editor |
+| Ver localmente | `python -m http.server 5177` na raiz → http://localhost:5177/ |
+| Editor local | http://localhost:5177/?modo=editor |
 | Editor público | https://helderabud.github.io/Jantar/?modo=editor |
 | Publicar | Branch → PR → merge em `Main` → GitHub Pages |
 | Status Pages | `gh api repos/HelderAbud/Jantar/pages --jq '{status, html_url}'` |
