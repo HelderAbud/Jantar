@@ -2,14 +2,16 @@
 
 Convite interativo estilo iPhone — mini app HTML. Use o exemplo Bruno → Lara **ou** crie o seu e compartilhe um link.
 
+**Landing (apresentação do produto):** [helderabud.github.io/Jantar/site/](https://helderabud.github.io/Jantar/site/)
+
 ![Convite Jantar — capa](docs/linkedin/linkedin-capa-convite-jantar.png)
 
 ## Links
 
 | Uso | URL |
 |-----|-----|
+| **Landing / site** | https://helderabud.github.io/Jantar/site/ |
 | Demo (exemplo Bruno → Lara) | https://helderabud.github.io/Jantar/ |
-| Landing (Convite Jantar) | https://helderabud.github.io/Jantar/site/ |
 | Editor (criar o seu) | https://helderabud.github.io/Jantar/?modo=editor |
 | Venda / white-label | https://helderabud.github.io/Jantar/?modo=venda |
 | Pro (demo) | acrescente `?pro=JL-PRO-DEMO` na URL |
