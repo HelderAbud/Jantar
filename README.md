@@ -4,6 +4,14 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Bruno → Lara
 
 **Landing (apresentação do produto):** [helderabud.github.io/Jantar/site/](https://helderabud.github.io/Jantar/site/)
 
+### Produto real + portfólio
+
+O Convite Jantar está no ar (demo, editor, landing). O front é **público de propósito** — para mostrar processo, craft e produto de ponta a ponta.
+
+**O que não vai no Git:** tokens, `.env`, Worker com chaves de pagamento. Checkout e licenças correm em ambiente separado, com secrets só no deploy.
+
+Experiência: [landing](https://helderabud.github.io/Jantar/site/) · [demo](https://helderabud.github.io/Jantar/) · [criar](https://helderabud.github.io/Jantar/?modo=editor)
+
 ![Convite Jantar — capa](docs/linkedin/linkedin-capa-convite-jantar.png)
 
 ## Links
