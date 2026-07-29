@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Convite Jantar — transforme um simples bora jantar? numa experiência interativa para WhatsApp. Sem app. Sem cadastro." />
+  <meta name="theme-color" content="#07060c" />
+  <meta property="og:title" content="Convite Jantar — Convites que as pessoas lembram" />
+  <meta property="og:description" content="Mini-app interativo para WhatsApp. Sem aplicativo. Sem cadastro." />
+  <meta property="og:image" content="https://helderabud.github.io/Jantar/docs/linkedin/linkedin-capa-convite-jantar.png" />
+  <meta property="og:url" content="https://helderabud.github.io/Jantar/site/" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://helderabud.github.io/Jantar/site/" />
+  <title>Convite Jantar — Convites que as pessoas lembram</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="bg-aurora" aria-hidden="true"></div>
+  <canvas class="bg-particles" id="particles" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="#topo">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Convite Jantar</span>
+    </a>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="topnav" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="topnav" id="topnav">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#demo">Demo</a>
+      <a href="#como-usar">Como usar</a>
+      <a href="#faq">FAQ</a>
+      <a class="nav-cta" href="../?modo=editor">Criar convite</a>
+    </nav>
+  </header>
+
+  <main id="topo">
+    <section class="hero">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">Mini-app · WhatsApp · Sem cadastro</p>
+        <h1>
+          <span class="h1-line">Convites que</span>
+          <span class="h1-accent">as pessoas lembram.</span>
+        </h1>
+        <p class="lede">
+          Transforme um simples <em>“bora jantar?”</em>
+          numa experiência interativa.
+          Criado para WhatsApp. Sem aplicativo. Sem cadastro.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="../?modo=editor">Criar convite</a>
+          <a class="btn btn-ghost" href="#demo">Ver demonstração</a>
+        </div>
+        <p class="hero-note">
+          Free: montar e ver. Enviar link = Pro (1 envio por pagamento).
+        </p>
+      </div>
+
+      <div class="hero-visual reveal" data-delay="120">
+        <div class="phone-stage" id="phone-stage">
+          <div class="phone-glow"></div>
+          <img
+            class="hero-art"
+            src="../docs/linkedin/linkedin-capa-convite-jantar.png"
+            width="1200"
+            height="675"
+            alt="Convite Jantar — capa do produto com mock iPhone e jantar à noite"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="section how" id="como-funciona">
+      <div class="section-head reveal">
+        <p class="eyebrow">Fluxo</p>
+        <h2>Como funciona</h2>
+        <p class="section-lede">Uma linha do tempo. Sem enrolação.</p>
+      </div>
+
+      <ol class="timeline">
+        <li class="timeline-item reveal"><span class="step-num">01</span><strong>Você cria</strong><p>Abre o editor e define nomes.</p></li>
+        <li class="timeline-item reveal"><span class="step-num">02</span><strong>Personaliza</strong><p>Textos, comida, WhatsApps.</p></li>
+        <li class="timeline-item reveal"><span class="step-num">03</span><strong>Gera link</strong><p>A config viaja no próprio URL.</p></li>
+        <li class="timeline-item reveal"><span class="step-num">04</span><strong>Compartilha</strong><p>Manda no WhatsApp (Pro).</p></li>
+        <li class="timeline-item reveal"><span class="step-num">05</span><strong>Pessoa recebe</strong><p>Abre no celular — parece um iPhone.</p></li>
+        <li class="timeline-item reveal"><span class="step-num">06</span><strong>Desbloqueia</strong><p>Notificação, IA, missão, calendário.</p></li>
+        <li class="timeline-item reveal"><span class="step-num">07</span><strong>Aceita o convite</strong><p>Responde com um toque.</p></li>
+      </ol>
+    </section>
+
+    <section class="section demo-scroll" id="demo" aria-label="Demonstração">
+      <div class="section-head reveal demo-scroll-head">
+        <p class="eyebrow">Demonstração</p>
+        <h2>A experiência, no scroll</h2>
+        <p class="section-lede">Desce a página. O telefone acompanha a história.</p>
+      </div>
+
+      <div class="demo-pin" id="demo-pin">
+        <div class="demo-sticky">
+          <div class="demo-phone" id="demo-phone">
+            <div class="demo-phone-bezel">
+              <div class="demo-phone-notch" aria-hidden="true"></div>
+              <div class="demo-phone-screen" id="demo-screens">
+                <img
+                  class="demo-screen is-active"
+                  data-step="0"
+                  src="../docs/linkedin/linkedin-slide-1-ideia.png"
+                  width="1200"
+                  height="675"
+                  alt="Slide: a ideia do Convite Jantar"
+                  decoding="async"
+                />
+                <img
+                  class="demo-screen"
+                  data-step="1"
+                  src="../docs/linkedin/linkedin-slide-2-fluxo.png"
+                  width="1200"
+                  height="675"
+                  alt="Slide: fluxo do convite no celular"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="demo-screen"
+                  data-step="2"
+                  src="../docs/linkedin/linkedin-slide-3-editor.png"
+                  width="1200"
+                  height="675"
+                  alt="Slide: editor para personalizar o convite"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="demo-screen"
+                  data-step="3"
+                  src="../docs/linkedin/linkedin-slide-4-cta.png"
+                  width="1200"
+                  height="675"
+                  alt="Slide: criar e enviar o convite"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <iframe
+                  class="demo-live"
+                  id="demo-live"
+                  title="Demo ao vivo do Convite Jantar"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  hidden
+                ></iframe>
+              </div>
+            </div>
+            <div class="demo-phone-glow" aria-hidden="true"></div>
+          </div>
+
+          <div class="demo-story" id="demo-story">
+            <article class="demo-caption is-active" data-step="0">
+              <span class="demo-caption-num">01</span>
+              <h3>Não é só uma mensagem</h3>
+              <p>É um mini-app no celular: desbloqueia, brinca, aceita e agenda.</p>
+            </article>
+            <article class="demo-caption" data-step="1">
+              <span class="demo-caption-num">02</span>
+              <h3>O fluxo que prende</h3>
+              <p>Notificação → “IA” → missão (botão que foge) → comida → calendário.</p>
+            </article>
+            <article class="demo-caption" data-step="2">
+              <span class="demo-caption-num">03</span>
+              <h3>Você personaliza</h3>
+              <p>Nomes, textos e dois WhatsApps. A config viaja no próprio link.</p>
+            </article>
+            <article class="demo-caption" data-step="3">
+              <span class="demo-caption-num">04</span>
+              <h3>Manda no WhatsApp</h3>
+              <p>Free: montar e ver. Enviar = Pro (1 licença por pagamento).</p>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-live-bar reveal">
+        <div class="demo-live-copy">
+          <p class="eyebrow">Ao vivo</p>
+          <h3>O mini-app real no telefone</h3>
+          <p>No desktop a demo já carrega dentro do mock. Podes trocar pelos slides ou abrir em página cheia.</p>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" id="btn-load-live">Ver slides LinkedIn</button>
+          <a class="btn btn-ghost" href="../" target="_blank" rel="noopener">Abrir em página cheia</a>
+          <a class="btn btn-ghost" href="../?modo=venda">White-label / Pro</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how-to" id="como-usar">
+      <div class="section-head reveal">
+        <p class="eyebrow">Passo a passo</p>
+        <h2>Como usar</h2>
+        <p class="section-lede">Do editor ao WhatsApp — sem cadastro.</p>
+      </div>
+
+      <ol class="howto-grid">
+        <li class="howto-card reveal">
+          <span class="howto-num">01</span>
+          <h3>Abre o editor</h3>
+          <p>Entra no formulário e começa a personalizar.</p>
+          <a class="howto-link" href="../?modo=editor">Abrir editor →</a>
+        </li>
+        <li class="howto-card reveal">
+          <span class="howto-num">02</span>
+          <h3>Nomes + 2 WhatsApps</h3>
+          <p>Quem convida, quem recebe, e os números para envio e resposta.</p>
+        </li>
+        <li class="howto-card reveal">
+          <span class="howto-num">03</span>
+          <h3>Ver prévia</h3>
+          <p>No Free podes montar e ver o convite completo antes de pagar.</p>
+        </li>
+        <li class="howto-card reveal">
+          <span class="howto-num">04</span>
+          <h3>Free ou Pro</h3>
+          <p>Só ver = Free. Para copiar, encurtar ou enviar = Pro (1 envio por pagamento).</p>
+          <a class="howto-link" href="../?modo=venda">Ver Pro →</a>
+        </li>
+        <li class="howto-card reveal">
+          <span class="howto-num">05</span>
+          <h3>Envia no WhatsApp</h3>
+          <p>Com Pro ativo, manda o link. Uma licença = um envio (WA, IG ou copiar).</p>
+        </li>
+        <li class="howto-card reveal">
+          <span class="howto-num">06</span>
+          <h3>A pessoa responde</h3>
+          <p>Abre no celular, desbloqueia, escolhe e responde com um toque.</p>
+          <a class="howto-link" href="#demo">Ver demo →</a>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section features" id="recursos">
+      <div class="section-head reveal">
+        <p class="eyebrow">Produto</p>
+        <h2>Recursos</h2>
+        <p class="section-lede">O essencial, sem enrolação.</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <h3>Link no URL</h3>
+          <p>A configuração viaja no `#c=`. Sem conta. Sem servidor de convites.</p>
+        </article>
+        <article class="feature-card reveal">
+          <h3>Experiência iPhone</h3>
+          <p>Bloqueio, notificação, “IA”, missão com botão que foge, comida e calendário.</p>
+        </article>
+        <article class="feature-card reveal">
+          <h3>WhatsApp first</h3>
+          <p>Feito para mandar no chat. Dois números: envio e resposta do criador.</p>
+        </article>
+        <article class="feature-card reveal">
+          <h3>Free vs Pro</h3>
+          <p>Montar e pré-visualizar é Free. Enviar ou copiar o link consome 1 licença Pro.</p>
+        </article>
+        <article class="feature-card reveal">
+          <h3>Editor simples</h3>
+          <p>Nomes, textos, opções de comida e promessas — gera o link na hora.</p>
+        </article>
+        <article class="feature-card reveal">
+          <h3>White-label</h3>
+          <p>Fluxo de venda/Pro separado para quem quer a experiência completa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <div class="section-head reveal">
+        <p class="eyebrow">Dúvidas</p>
+        <h2>FAQ</h2>
+        <p class="section-lede">Respostas diretas sobre Free, Pro e o link.</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Preciso instalar um app?</summary>
+          <p>Não. É um mini-app no browser. A pessoa abre o link no celular (WhatsApp) e pronto.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>O que o Free permite?</summary>
+          <p>Montar o convite e ver a prévia. Copiar link, encurtar, Instagram ou enviar no WhatsApp exige Pro.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>O que é a licença Pro de 1 envio?</summary>
+          <p>Cada pagamento desbloqueia um envio: WhatsApp, Instagram ou copiar/encurtar o link. Depois disso, a licença é consumida.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Preciso criar conta?</summary>
+          <p>Não. Nomes e textos vão no próprio link. Sem cadastro e sem backend de utilizadores.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Funciona em iPhone e Android?</summary>
+          <p>Sim. A experiência é mobile-first (Safari/Chrome). Ideal abrir no telemóvel.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Posso usar para outro tipo de convite?</summary>
+          <p>O MVP é jantar. Templates multi-evento (cinema, café, etc.) estão no roadmap — ainda não na home.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Onde está o código?</summary>
+          <p>Público no GitHub: <a href="https://github.com/HelderAbud/Jantar" rel="noopener" target="_blank">HelderAbud/Jantar</a>.</p>
+        </details>
+      </div>
+
+      <div class="faq-cta reveal">
+        <p>Pronto para criar o teu?</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="../?modo=editor">Criar convite</a>
+          <a class="btn btn-ghost" href="../?modo=venda">White-label / Pro</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-brand">Convite Jantar</div>
+        <p class="footer-tagline">Convites interativos para WhatsApp. Sem app. Sem cadastro.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Produto</h4>
+          <a href="../">Demo</a>
+          <a href="../?modo=editor">Editor</a>
+          <a href="../?modo=venda">Pro / White-label</a>
+          <a href="#demo">Demo na landing</a>
+        </div>
+        <div class="footer-col">
+          <h4>Recursos</h4>
+          <a href="#como-usar">Como usar</a>
+          <a href="#faq">FAQ</a>
+          <a href="../docs/linkedin/POST-LINKEDIN.md">Kit LinkedIn</a>
+          <a href="https://github.com/HelderAbud/Jantar" rel="noopener" target="_blank">GitHub</a>
+        </div>
+        <div class="footer-col">
+          <h4>Roadmap</h4>
+          <span>Templates multi-evento</span>
+          <span>Domínio próprio</span>
+          <span>Mais temas (fora do MVP)</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-meta">Helder Abud · Convite Jantar · GitHub Pages</p>
+      <a class="footer-meta" href="https://github.com/HelderAbud/Jantar" rel="noopener" target="_blank">Código aberto</a>
+    </div>
+  </footer>
+
+  <div class="mobile-cta" id="mobile-cta">
+    <a class="btn btn-primary" href="../?modo=editor">Criar convite</a>
+    <a class="btn btn-ghost" href="#demo">Ver demo</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
