@@ -1,6 +1,6 @@
 # Convite Jantar ✨ (editável)
 
-Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Alexia **ou** crie o seu e compartilhe um link.
+Convite interativo estilo iPhone — mini app HTML. Use o exemplo Bruno → Lara **ou** crie o seu e compartilhe um link.
 
 ![Convite Jantar — capa](docs/linkedin/linkedin-capa-convite-jantar.png)
 
@@ -8,10 +8,14 @@ Convite interativo estilo iPhone — mini app HTML. Use o exemplo Helder → Ale
 
 | Uso | URL |
 |-----|-----|
-| Demo (exemplo Helder → Alexia) | https://helderabud.github.io/Jantar/ |
+| Demo (exemplo Bruno → Lara) | https://helderabud.github.io/Jantar/ |
+| Landing (Convite Jantar) | https://helderabud.github.io/Jantar/site/ |
 | Editor (criar o seu) | https://helderabud.github.io/Jantar/?modo=editor |
-| Local | http://localhost:5177/ e http://localhost:5177/?modo=editor |
+| Venda / white-label | https://helderabud.github.io/Jantar/?modo=venda |
+| Pro (demo) | acrescente `?pro=JL-PRO-DEMO` na URL |
+| Local | http://localhost:5177/ · `/site/` · `?modo=editor` · `?modo=venda` |
 
+Kit Instagram (Jantar Link): [`docs/instagram/`](docs/instagram/).
 Kit LinkedIn: [`docs/linkedin/`](docs/linkedin/).
 
 ## O que é
@@ -20,7 +24,7 @@ Experiência mobile com telas: bloqueio → IA → resultado → missão → esc
 
 Qualquer pessoa pode preencher nomes e textos no **editor**, gerar um link (`#c=...`) e enviar no WhatsApp. **Sem cadastro e sem backend próprio** — a configuração vai no próprio link (opcionalmente encurtado via serviço externo ao copiar/enviar).
 
-Sem `#c=` na URL, o site continua com o convite-exemplo Helder → Alexia.
+Sem `#c=` na URL, o site continua com o convite-exemplo Bruno → Lara.
 
 ## Como criar o seu (rápido)
 
@@ -43,7 +47,7 @@ Placeholders da mensagem WhatsApp final: `{from}` `{to}` `{food}` `{date}`.
 - Limite prático ~2000 caracteres; o editor avisa se passar.
 - Quem tem o link (incluindo `#c=`) vê o conteúdo: trate como semi-público.
 
-## Mensagem para enviar (exemplo Helder/Alexia)
+## Mensagem para enviar (exemplo Bruno/Lara)
 
 Texto pronto em [`mensagem-whatsapp.txt`](mensagem-whatsapp.txt) — copie e cole no WhatsApp antes do link do exemplo.
 
@@ -66,6 +70,7 @@ Texto pronto em [`mensagem-whatsapp.txt`](mensagem-whatsapp.txt) — copie e col
 # Na raiz do repositório
 python -m http.server 5177
 # Convite:  http://localhost:5177/
+# Landing:  http://localhost:5177/site/
 # Editor:   http://localhost:5177/?modo=editor
 ```
 
