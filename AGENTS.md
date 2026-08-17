@@ -91,6 +91,8 @@ Mudanças no fluxo, textos-base ou interações devem atualizar este contrato (o
 | Venda (white-label) | http://localhost:5177/?modo=venda · `/?modo=venda` no Pages |
 | Pro (demo token) | `/?pro=JL-PRO-DEMO` |
 | Pagamento sandbox MP | `docs/venda/SANDBOX-MERCADO-PAGO.md` · `cd commerce/worker && npm run dev:mp` |
+| Pagamento produção | `docs/venda/DEPLOY-CLOUDFLARE.md` · Worker Cloudflare + token MP de produção |
+| Testes do Worker | `cd commerce/worker && npm test` |
 | Publicar | Branch → PR → merge em `Main` → GitHub Pages |
 | Status Pages | `gh api repos/HelderAbud/Jantar/pages --jq '{status, html_url}'` |
 
