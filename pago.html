@@ -42,8 +42,8 @@
 <body>
   <div class="card">
     <h1 id="title">Pagamento concluído</h1>
-    <p id="msg">Abrindo o editor Pro no seu computador…</p>
-    <a id="local" href="http://127.0.0.1:5177/index.html?modo=editor">Abrir o editor Pro</a>
+    <p id="msg">Abrindo o editor Pro…</p>
+    <a id="local" href="./?modo=editor">Abrir o editor Pro</a>
     <a id="pages" class="ghost" href="./?modo=venda">Continuar neste site</a>
   </div>
   <script>
@@ -55,20 +55,26 @@
       var msg = document.getElementById('msg');
       var local = document.getElementById('local');
       var pages = document.getElementById('pages');
-      var q = order ? ('&order=' + encodeURIComponent(order) + '&pago=1') : '';
-      var localUrl = 'http://127.0.0.1:5177/index.html?modo=venda' + (order ? ('&pago=1&order=' + encodeURIComponent(order)) : '');
-      local.href = localUrl;
-      pages.href = './?modo=venda' + q;
+      var onPages = location.hostname === 'helderabud.github.io';
+      var dir = location.pathname.replace(/pago\.html$/i, '');
+      if (dir && dir.charAt(dir.length - 1) !== '/') dir += '/';
+      var pagesUrl = location.origin + dir + '?modo=venda' + (order ? ('&pago=1&order=' + encodeURIComponent(order)) : '');
+      var localUrl = 'http://127.0.0.1:5177/index.html?modo=venda' + (order ? ('&pago=1&order=' + encodeURIComponent(order) + '&api=cf') : '&api=cf');
+      var nextUrl = onPages ? pagesUrl : localUrl;
+      local.href = nextUrl;
+      pages.href = pagesUrl;
 
       if (status === 'failure') {
         title.textContent = 'Pagamento não concluído';
         msg.textContent = 'Pode fechar esta aba e tentar de novo no Jantar Link.';
       } else if (status === 'pending') {
         title.textContent = 'Pagamento pendente';
-        msg.textContent = 'Quando o Mercado Pago confirmar, o editor abre na outra aba.';
+        msg.textContent = 'Quando o Mercado Pago confirmar, o editor abre neste site.';
       } else {
-        msg.textContent = 'Abrindo o editor Pro (nomes + 1 envio)…';
-        location.replace(localUrl);
+        msg.textContent = onPages
+          ? 'Abrindo o editor Pro neste site (nomes + 1 envio)…'
+          : 'Abrindo o editor Pro no seu computador…';
+        location.replace(nextUrl);
       }
 
       try {

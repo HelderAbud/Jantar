@@ -1,0 +1,20 @@
+{
+  "name": "jantar-link-commerce",
+  "private": true,
+  "version": "0.1.0",
+    "description": "Checkout + webhook Mercado Pago (Jantar Link Pro)",
+    "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:mock": "node mock-server.mjs",
+    "dev:mp": "node --use-system-ca mp-server.mjs",
+    "test": "node --test ./lib/checkout-urls.test.mjs ./lib/mock-flow.test.mjs ./lib/worker-parity.test.mjs",
+    "smoke": "node --use-system-ca scripts/smoke-check.mjs",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
+}

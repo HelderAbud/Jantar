@@ -1,0 +1,21 @@
+name = "jantar-link-commerce"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+account_id = "56dc71c776217146b814d4b7a47086c5"
+workers_dev = true
+preview_urls = false
+
+[[kv_namespaces]]
+binding = "ORDERS"
+id = "6877a7f8625240d1b06b4e4dfdc4edb5"
+
+[vars]
+PUBLIC_APP_ORIGIN = "https://helderabud.github.io"
+PUBLIC_APP_PATH = "/Jantar/"
+PUBLIC_RETURN_ORIGIN = "https://helderabud.github.io/Jantar"
+CHECKOUT_AMOUNT_CENTAVOS = "200"
+MOCK_MODE = "false"
+MP_NOTIFICATION_URL = "https://jantar-link-commerce.jantar-alexia-2026alexia-link-pagamentojantar-hunter.workers.dev/api/webhooks/mercadopago"
+
+# Secrets (nunca no Git): wrangler secret put MP_ACCESS_TOKEN
+#                          wrangler secret put PRO_TOKEN

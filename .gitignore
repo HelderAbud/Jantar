@@ -2,6 +2,17 @@
 Aléxia.md.txt
 *.md.txt
 
+# Segredos locais (Instagram, PIX, commerce) — NUNCA versionar
+.env
+.env.*
+!.env.instagram.example
+!.env.example
+commerce/worker/.dev.vars
+commerce/worker/node_modules/
+docs/instagram/*.local.md
+docs/venda/*.local.md
+!.commerce/worker/.dev.vars.example
+
 # Editor / OS
 .DS_Store
 Thumbs.db

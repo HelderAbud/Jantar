@@ -30,6 +30,57 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* Landing demo: preenche o mock da site/ sem “telefone dentro de telefone” */
+    html.embed-demo,
+    html.embed-demo body {
+      background: transparent;
+    }
+
+    html.embed-demo .stage {
+      padding: 0;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    html.embed-demo .phone {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      background: rgba(12, 10, 20, 0.92);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    html.embed-demo .hearts-bg,
+    html.embed-demo #particles {
+      opacity: 0.35;
+    }
+
+    html.embed-demo .jl-watermark,
+    html.embed-demo #btn-create-mine,
+    html.embed-demo #btn-share-ig-lock,
+    html.embed-demo #btn-open-venda,
+    html.embed-demo #btn-share-ig-done,
+    html.embed-demo .pro-lock-banner {
+      display: none !important;
+    }
+
+    html.embed-demo #screen-1 .notification {
+      overflow: hidden;
+      max-height: 38%;
+    }
+
+    html.embed-demo #screen-1 .lock-actions {
+      padding-bottom: 8px;
+    }
+
+    html.embed-demo #screen-1 .swipe-area {
+      width: 100%;
+    }
+
     /* Ambient background */
     .ambient {
       position: fixed;
@@ -232,11 +283,54 @@
     .notif-body p:last-child { margin-bottom: 0; }
 
     .swipe-area {
-      position: absolute;
-      bottom: 36px;
-      left: 24px;
-      right: 24px;
+      position: relative;
+      width: 100%;
+      margin-top: 4px;
       text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Rodapé da tela 1: uma coluna, sem absolute em cima do deslize */
+    #screen-1 .lock-actions {
+      width: 100%;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding-bottom: 22px;
+      flex-shrink: 0;
+    }
+
+    #screen-1 .lock-actions .btn-create-mine,
+    #screen-1 .lock-actions .btn-share-ig {
+      width: 100%;
+      margin: 0;
+    }
+
+    #screen-1 .lock-actions .create-mine-link {
+      margin: 0 auto;
+      padding: 4px 8px;
+    }
+
+    /* Banner Pro/Free só no editor / fim — na lock ocupa demais */
+    #screen-1 .pro-lock-banner {
+      display: none !important;
+    }
+
+    #screen-1 .notification {
+      flex: 0 1 auto;
+      max-height: 42%;
+      overflow: auto;
+      margin-bottom: 8px;
+    }
+
+    #screen-1 .lock-time {
+      margin-top: 28px;
+    }
+
+    #screen-1 .lock-date {
+      margin-bottom: 20px;
     }
 
     .swipe-track {
@@ -887,6 +981,231 @@
 
     .btn-create-mine:active { transform: scale(0.98); }
 
+    .btn-share-ig {
+      display: block;
+      width: calc(100% - 48px);
+      margin: 8px 24px 0;
+      padding: 10px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 20;
+      position: relative;
+    }
+
+    .btn-share-ig:active { transform: scale(0.98); }
+
+    .pro-gated[hidden],
+    .pro-only-block[hidden] {
+      display: none !important;
+    }
+
+    .pro-lock-banner {
+      margin: 10px 0 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 200, 120, 0.12);
+      border: 1px solid rgba(255, 200, 120, 0.35);
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: left;
+    }
+
+    .pro-lock-banner a {
+      color: rgba(255, 220, 180, 0.95);
+      font-weight: 600;
+    }
+
+    .pro-lock-banner.is-unlocked {
+      background: rgba(120, 255, 180, 0.1);
+      border-color: rgba(120, 255, 180, 0.35);
+    }
+
+    button.pro-locked,
+    .btn-accept.pro-locked,
+    .btn-whatsapp.pro-locked,
+    .btn-share-ig.pro-locked {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.3);
+    }
+
+    #ed-link-preview.pro-blur {
+      filter: blur(4px);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .jl-watermark {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 10px;
+      z-index: 40;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .jl-watermark a {
+      color: rgba(255, 220, 240, 0.9);
+      text-decoration: underline;
+    }
+
+    .jl-watermark.is-pro {
+      color: rgba(180, 255, 210, 0.75);
+      pointer-events: none;
+    }
+
+    .jl-toast {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      z-index: 200;
+      max-width: 90vw;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(20, 20, 30, 0.92);
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .jl-toast.show { display: block; }
+
+    body.venda-open {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    html.venda-open {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body.venda-open .stage,
+    body.venda-open #confetti {
+      display: none !important;
+    }
+
+    #venda-panel {
+      display: none;
+      position: relative;
+      z-index: 20;
+    }
+
+    body.venda-open #venda-panel {
+      display: block;
+      min-height: 100vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 24px 16px 40px;
+    }
+
+    body.venda-open #venda-panel .editor-card {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .venda-price {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      font-size: 14px;
+    }
+
+    .venda-steps {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .vd-return-box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      background: rgba(52, 211, 153, 0.12);
+      text-align: left;
+    }
+
+    .vd-return-box p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .vd-return-box .btn-next,
+    .vd-return-box a.btn-accept {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      box-sizing: border-box;
+    }
+
+    #vd-pay-wait {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(12, 8, 16, 0.72);
+      backdrop-filter: blur(10px);
+    }
+
+    #vd-pay-wait.is-open {
+      display: grid;
+    }
+
+    .vd-pay-wait-card {
+      width: min(420px, 100%);
+      padding: 22px 18px;
+      border-radius: 22px;
+      background: rgba(32, 18, 42, 0.96);
+      border: 1px solid rgba(244, 194, 215, 0.35);
+      text-align: center;
+    }
+
+    .vd-pay-wait-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .vd-pay-wait-card p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
+    body.editor-open #venda-panel {
+      display: none !important;
+    }
+
+    body.venda-open #editor-panel {
+      display: none !important;
+    }
+
     /* Editor (full page) */
     body.editor-open {
       overflow: hidden;
@@ -1081,11 +1400,11 @@
             <div class="notif-icon">🔒</div>
             <div>
               <div class="notif-app">Convite recebido</div>
-              <div class="notif-sender" id="notif-sender">Helder</div>
+              <div class="notif-sender" id="notif-sender">Bruno</div>
             </div>
           </div>
           <div class="notif-body" id="notif-body">
-            <p>Oi, Alexia 😊</p>
+            <p>Oi, Lara 😊</p>
             <p>Lembra daquele jantar que comentamos?</p>
             <p>Resolvi fazer um convite um pouco diferente.</p>
             <p>Você topa jantar comigo?</p>
@@ -1093,14 +1412,19 @@
           </div>
         </div>
 
-        <div class="swipe-area">
-          <div class="swipe-track" id="swipe-track">
-            <div class="swipe-fill" id="swipe-fill"></div>
-            <div class="swipe-label">Deslize para desbloquear</div>
-            <div class="swipe-thumb" id="swipe-thumb">➡️</div>
+        <div class="lock-actions">
+          <button type="button" class="btn-create-mine" id="btn-create-mine">✨ Criar o seu convite</button>
+          <button type="button" class="btn-share-ig pro-gated" id="btn-share-ig-lock" data-pro-action="share">📤 Copiar para Instagram</button>
+          <div class="swipe-area">
+            <div class="swipe-track" id="swipe-track">
+              <div class="swipe-fill" id="swipe-fill"></div>
+              <div class="swipe-label">Deslize para desbloquear</div>
+              <div class="swipe-thumb" id="swipe-thumb">➡️</div>
+            </div>
           </div>
+          <p class="pro-lock-banner" id="pro-banner-lock" hidden></p>
+          <button type="button" class="create-mine-link" id="btn-open-venda">White-label · Jantar Link</button>
         </div>
-        <button type="button" class="btn-create-mine" id="btn-create-mine">✨ Criar o seu convite</button>
       </div>
 
       <!-- Tela 2: IA -->
@@ -1137,7 +1461,7 @@
         <div class="glass-card observation">
           <div class="obs-label">⚠️ Observação</div>
           <div class="obs-text" id="result-note">
-            A IA detectou que <strong>Helder acha Alexia linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.
+            A IA detectou que <strong>Bruno acha Lara linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.
           </div>
         </div>
 
@@ -1223,24 +1547,92 @@
           <div class="glass-card calendar-summary">
             <p><strong>Data:</strong> <span id="summary-date"></span></p>
             <p><strong>Jantar:</strong> <span id="summary-food"></span></p>
-            <p id="pickup-line"><strong>Helder:</strong> vou te buscar 😊</p>
+            <p id="pickup-line"><strong>Bruno:</strong> vou te buscar 😊</p>
           </div>
           <p class="whatsapp-hint">Toque no botão abaixo para me enviar tudo no WhatsApp 😊</p>
           <button type="button" class="btn-whatsapp" id="btn-whatsapp">
-            💬 Enviar pro Helder
+            💬 Enviar pro Bruno
           </button>
+          <button type="button" class="btn-share-ig pro-gated" id="btn-share-ig-done" style="width:100%;margin:8px 0 0" data-pro-action="share">📤 Copiar para Instagram</button>
+          <p class="pro-lock-banner" id="pro-banner-done" hidden></p>
           <button type="button" class="create-mine-link" id="btn-back-editor">← Voltar ao formulário</button>
         </div>
       </div>
 
       <div class="home-indicator"></div>
+      <div class="jl-watermark" id="jl-watermark">Feito com <strong>Jantar Link</strong></div>
+    </div>
+  </div>
+
+  <div id="jl-toast" class="jl-toast" role="status" aria-live="polite"></div>
+
+  <div id="venda-panel" aria-hidden="true">
+    <div class="editor-card">
+      <h1>Jantar Link · White-label</h1>
+      <p class="editor-lead">Veja o preview com os nomes. O editor básico é grátis; o Pro remove a marca e libera o pacote white-label (entrega manual após PIX).</p>
+
+      <div class="editor-field">
+        <label for="vd-from">Quem convida</label>
+        <input id="vd-from" type="text" maxlength="40" placeholder="Ex.: Bruno" autocomplete="name">
+      </div>
+      <div class="editor-field">
+        <label for="vd-reply-phone">Seu WhatsApp (receber a resposta) — DDI + números</label>
+        <input id="vd-reply-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5561888888888" autocomplete="tel">
+      </div>
+      <div class="editor-field">
+        <label for="vd-to">Quem é convidada(o)</label>
+        <input id="vd-to" type="text" maxlength="40" placeholder="Ex.: Lara" autocomplete="name">
+      </div>
+      <div class="editor-field">
+        <label for="vd-invite-phone">WhatsApp dela/dele (enviar o convite) — DDI + números</label>
+        <input id="vd-invite-phone" type="tel" inputmode="numeric" maxlength="15" placeholder="5561999999999" autocomplete="tel">
+      </div>
+
+      <div class="venda-price" id="vd-price">Pro white-label: R$ 2,00 (preço de teste)</div>
+
+      <ol class="venda-steps">
+        <li>Preencha nomes e os 2 WhatsApps</li>
+        <li>Preview Free = só ver (sem enviar)</li>
+        <li>Pagar Pro → editor liberado → 1 envio por pagamento</li>
+      </ol>
+
+      <div class="editor-actions">
+        <button type="button" class="btn-next" id="vd-preview">Ver preview com estes nomes →</button>
+        <button type="button" class="btn-next" id="vd-pay" style="margin-top:8px">💳 Pagar Pro (checkout)</button>
+        <button type="button" class="btn-accept" id="vd-local-unlock" style="margin-top:8px;background:rgba(52,211,153,0.25);border-color:rgba(52,211,153,0.5)">
+          ⚡ Teste local: liberar Pro SEM Mercado Pago →
+        </button>
+        <div id="vd-return-box" class="vd-return-box" hidden>
+          <p><strong>Não feche esta aba.</strong> O Mercado Pago abre noutra janela. Quando pagar, o editor abre <em>aqui</em> sozinho — mesmo se a tela verde do MP ficar presa.</p>
+          <button type="button" class="btn-next" id="vd-return-btn" style="width:100%">Já paguei — abrir editor Pro</button>
+          <a class="btn-accept" id="vd-go-mp" href="#" target="_blank" rel="noopener" style="display:block;margin-top:8px;text-align:center">Abrir Mercado Pago de novo →</a>
+        </div>
+        <button type="button" class="btn-accept" id="vd-recover" style="margin-top:8px;display:none">← Voltar ao app (já paguei)</button>
+        <button type="button" class="btn-accept" id="vd-whatsapp" style="width:100%;margin-top:8px">💬 Falar com o Helder (pedido manual / suporte)</button>
+        <p id="vd-pay-status" class="whatsapp-hint" style="text-align:left;margin-top:10px"></p>
+        <button type="button" class="btn-accept" id="vd-editor" style="margin-top:8px">Abrir editor gratuito</button>
+        <button type="button" class="create-mine-link" id="vd-back">Voltar ao exemplo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vd-pay-wait" hidden>
+    <div class="vd-pay-wait-card">
+      <h2>Pague no Mercado Pago</h2>
+      <p>Não feche <strong>esta</strong> aba. Se o Mercado Pago abrir uma tela 404 no GitHub, pode fechar aquela janela — o convite Pro abre <em>aqui</em>.</p>
+      <p id="vd-pay-wait-status">Aguardando confirmação do pagamento…</p>
+      <button type="button" class="btn-next" id="vd-pay-wait-open" style="width:100%;margin-top:8px">Já paguei — abrir editor</button>
+      <button type="button" class="create-mine-link" id="vd-pay-wait-cancel">Cancelar e voltar</button>
     </div>
   </div>
 
   <div id="editor-panel" aria-hidden="true">
     <div class="editor-card">
       <h1>Criar o seu convite</h1>
-      <p class="editor-lead">Preencha os campos, copie o link e envie no WhatsApp. Sem cadastro — o convite vai no próprio link (se só mudar nomes e WhatsApp, o link fica curto).</p>
+      <p class="editor-lead">No plano <strong>grátis</strong> você monta e <strong>só visualiza</strong>. Depois do Pro (pagamento) libera copiar link, gerar link e enviar no WhatsApp.</p>
+
+      <p class="pro-lock-banner" id="pro-banner-editor"></p>
+      <p class="whatsapp-hint" data-pro-sends style="text-align:left;margin:0 0 12px"></p>
 
       <div class="editor-row">
         <div class="editor-field">
@@ -1301,10 +1693,11 @@
       </div>
 
       <div class="editor-actions">
-        <button type="button" class="btn-next" id="ed-preview">Ver convite →</button>
-        <button type="button" class="btn-whatsapp" id="ed-send-wa" style="width:100%;margin-top:8px">💬 Enviar link no WhatsApp</button>
-        <button type="button" class="btn-accept" id="ed-copy">📋 Copiar link curto</button>
-        <button type="button" class="create-mine-link" id="ed-back">Voltar ao exemplo Helder/Alexia</button>
+        <button type="button" class="btn-next" id="ed-preview">👁 Ver prévia →</button>
+        <button type="button" class="btn-whatsapp pro-gated" id="ed-send-wa" style="width:100%;margin-top:8px" data-pro-action="send">💬 Enviar link no WhatsApp</button>
+        <button type="button" class="btn-accept pro-gated" id="ed-copy" data-pro-action="copy">📋 Copiar / gerar link curto</button>
+        <button type="button" class="create-mine-link" id="ed-unlock-pro">Desbloquear Pro — R$ 2,00 →</button>
+        <button type="button" class="create-mine-link" id="ed-back">Voltar ao exemplo Bruno/Lara</button>
       </div>
 
       <p class="editor-warn" id="ed-warn">Link longo demais (~2000 caracteres). Deixe os textos padrão ou encurte — só nomes + WhatsApp geram link curto.</p>
@@ -1314,18 +1707,18 @@
   </div>
 
   <script>
-    /* ── Config (default = Helder → Alexia) ── */
+    /* ── Config (default = Bruno → Lara) ── */
     const DEFAULT_CONFIG = {
-      fromName: 'Helder',
-      toName: 'Alexia',
+      fromName: 'Bruno',
+      toName: 'Lara',
       notifLines: [
-        'Oi, Alexia 😊',
+        'Oi, Lara 😊',
         'Lembra daquele jantar que comentamos?',
         'Resolvi fazer um convite um pouco diferente.',
         'Você topa jantar comigo?',
         '🍷🍝✨'
       ],
-      resultNote: 'A IA detectou que <strong>Helder acha Alexia linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
+      resultNote: 'A IA detectou que <strong>Bruno acha Lara linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
       missionPrompt: 'Você aceita jantar comigo?',
       foodOptions: [
         { emoji: '🍕', label: 'Pizza' },
@@ -1338,17 +1731,476 @@
         'Muitas risadas',
         'Sobremesa por minha conta 🍰'
       ],
-      pickupLine: 'vou te buscar 😊',
+      pickupLine: 'vou te buscar \u{1F60A}',
       whatsappInvitePhone: '', /* pessoa convidada — só no editor (enviar link) */
       whatsappPhone: '',       /* quem criou — resposta no fim do convite (vai no #c=) */
+      /* Escapes Unicode: evita � se o ficheiro/encoding falhar */
       whatsappMessageTemplate:
-        'Oi {from}! 😊\n\nAceitei o convite!\n\n🍽 Jantar: {food}\n📅 Dia: {date}\n\nCombinado! Me busca? ✨'
+        'Oi {from}! \u{1F60A}\n\nAceitei o convite!\n\n\u{1F37D} Jantar: {food}\n\u{1F4C5} Dia: {date}\n\nCombinado! Me busca? \u{2728}'
     };
 
     const URL_SOFT_LIMIT = 2000;
+
+    /** Marca comercial F1 — token Pro frágil (só HITL). Troque antes de vender de verdade. */
+    const BRAND = {
+      name: 'Jantar Link',
+      igHandle: '@basicmodaeacessorios',
+      proTokens: ['JL-PRO-DEMO'],
+      salesWhatsappE164: '',
+      priceLabel: 'Pro white-label: R$ 2,00 (preço de teste)',
+      /* Local = mp-server :8787. Público = Worker Cloudflare (sem 127.0.0.1). */
+      checkoutApiLocal: 'http://127.0.0.1:8787',
+      checkoutApiPublic:
+        'https://jantar-link-commerce.jantar-alexia-2026alexia-link-pagamentojantar-hunter.workers.dev',
+      checkoutApiBase: 'http://127.0.0.1:8787'
+    };
+
+    function resolveCheckoutApiBase() {
+      const h = location.hostname;
+      const local = h === '127.0.0.1' || h === 'localhost';
+      const params = new URLSearchParams(location.search);
+      const usePublic =
+        !local ||
+        params.get('api') === 'cf' ||
+        params.get('pago') === '1' ||
+        !!params.get('order');
+      return usePublic ? BRAND.checkoutApiPublic : BRAND.checkoutApiLocal;
+    }
+    Object.defineProperty(BRAND, 'checkoutApiBase', {
+      configurable: true,
+      get: resolveCheckoutApiBase
+    });
+
+    let isProUnlocked = false;
+    let proLicenseConsumed = false;
     let appConfig = structuredClone
       ? structuredClone(DEFAULT_CONFIG)
       : JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+    function showToast(msg) {
+      const el = document.getElementById('jl-toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    function isProActive() {
+      return getSendsLeft() > 0;
+    }
+
+    /** Contador duro: 1 = pode enviar; 0 = gasta; -1 = nunca ganhou Pro neste browser */
+    const LICENSE_SENDS_KEY = 'jl_sends_left';
+
+    function getSendsLeft() {
+      try {
+        const v = localStorage.getItem(LICENSE_SENDS_KEY);
+        if (v === null || v === '') return -1;
+        const n = parseInt(v, 10);
+        return Number.isFinite(n) ? n : 0;
+      } catch (_) {
+        return 0;
+      }
+    }
+
+    function setSendsLeft(n) {
+      const v = n < 0 ? 0 : n;
+      try {
+        localStorage.setItem(LICENSE_SENDS_KEY, String(v));
+        sessionStorage.setItem(LICENSE_SENDS_KEY, String(v));
+      } catch (_) {}
+      isProUnlocked = v > 0;
+      proLicenseConsumed = v === 0;
+    }
+
+    function grantProLicense(orderId) {
+      setSendsLeft(1);
+      proLicenseConsumed = false;
+      isProUnlocked = true;
+      try {
+        sessionStorage.removeItem('jl_pro_consumed');
+        localStorage.removeItem('jl_pro_consumed');
+        if (orderId) {
+          sessionStorage.setItem('jl_order_id', orderId);
+          localStorage.setItem('jl_order_id', orderId);
+        }
+      } catch (_) {}
+      updateProSendsBadge();
+    }
+
+    function updateProSendsBadge() {
+      const left = getSendsLeft();
+      const els = document.querySelectorAll('[data-pro-sends]');
+      els.forEach((el) => {
+        if (left < 0) {
+          el.textContent = 'Free — sem envios. Pague o Pro para 1 envio.';
+          el.hidden = false;
+        } else if (left > 0) {
+          el.textContent = 'Pro ativo — envios restantes: ' + left;
+          el.hidden = false;
+        } else {
+          el.textContent = 'Licença usada — envios restantes: 0. Pague outro Pro.';
+          el.hidden = false;
+        }
+      });
+    }
+
+    /** Prévia Free do criador — não abrir WA real (convidada com link #c= não usa ?preview=1). */
+    let invitePreviewOnlyMem = false;
+
+    function isInvitePreviewOnly() {
+      try {
+        if (new URLSearchParams(location.search).get('preview') === '1') return true;
+      } catch (_) {}
+      if (invitePreviewOnlyMem) return true;
+      try {
+        return sessionStorage.getItem('jl_preview_only') === '1';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function setInvitePreviewOnly(on) {
+      invitePreviewOnlyMem = !!on;
+      try {
+        if (on) sessionStorage.setItem('jl_preview_only', '1');
+        else sessionStorage.removeItem('jl_preview_only');
+      } catch (_) {}
+      try {
+        const u = new URL(location.href);
+        if (on) u.searchParams.set('preview', '1');
+        else u.searchParams.delete('preview');
+        history.replaceState(null, '', u.pathname + u.search + u.hash);
+      } catch (_) {}
+    }
+
+    function readConsumedFlag() {
+      return getSendsLeft() === 0;
+    }
+
+    function writeConsumedFlag(orderId) {
+      setSendsLeft(0);
+      try {
+        sessionStorage.setItem('jl_pro_consumed', '1');
+        localStorage.setItem('jl_pro_consumed', '1');
+        sessionStorage.removeItem('jl_pro');
+        if (orderId) localStorage.setItem('jl_order_consumed_' + orderId, '1');
+      } catch (_) {}
+    }
+
+    function clearConsumedFlag() {
+      /* Compat: “limpar consumido” = conceder 1 envio de novo */
+      grantProLicense(
+        (function () {
+          try {
+            return sessionStorage.getItem('jl_order_id') || localStorage.getItem('jl_order_id') || 'manual';
+          } catch (_) {
+            return 'manual';
+          }
+        })()
+      );
+    }
+
+    function stripProQuery() {
+      try {
+        const u = new URL(location.href);
+        if (u.searchParams.has('pro')) {
+          u.searchParams.delete('pro');
+          history.replaceState(null, '', u.pathname + u.search + u.hash);
+        }
+      } catch (_) {}
+    }
+
+    function resolveProFromUrl() {
+      const left = getSendsLeft();
+
+      /* Já gastou: ?pro= NÃO revive */
+      if (left === 0) {
+        isProUnlocked = false;
+        proLicenseConsumed = true;
+        stripProQuery();
+        updateProSendsBadge();
+        return;
+      }
+
+      /* Ainda tem envio */
+      if (left > 0) {
+        isProUnlocked = true;
+        proLicenseConsumed = false;
+        updateProSendsBadge();
+        return;
+      }
+
+      /* Nunca ganhou (-1): aceita ?pro= ou sessão */
+      const params = new URLSearchParams(location.search);
+      const token = (params.get('pro') || '').trim();
+      if (token && BRAND.proTokens.indexOf(token) !== -1) {
+        grantProLicense('demo');
+        try { sessionStorage.setItem('jl_pro', token); } catch (_) {}
+        return;
+      }
+      try {
+        const saved = sessionStorage.getItem('jl_pro');
+        if (saved && BRAND.proTokens.indexOf(saved) !== -1) {
+          grantProLicense('demo');
+        }
+      } catch (_) {}
+      updateProSendsBadge();
+    }
+
+    function consumeProLicense(reason) {
+      const left = getSendsLeft();
+      if (left <= 0) {
+        setSendsLeft(0);
+        isProUnlocked = false;
+        proLicenseConsumed = true;
+        stripProQuery();
+        applyProPermissions();
+        updateProSendsBadge();
+        showToast('Sem envios. Pague outro Pro.');
+        return;
+      }
+      let orderId = '';
+      try {
+        orderId = sessionStorage.getItem('jl_order_id') || localStorage.getItem('jl_order_id') || '';
+      } catch (_) {}
+      writeConsumedFlag(orderId);
+      try {
+        const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+        if (orderId && base) {
+          fetch(base + '/api/orders/' + encodeURIComponent(orderId) + '/consume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: reason || 'outbound' }),
+            keepalive: true
+          }).catch(() => {});
+        }
+      } catch (_) {}
+      try {
+        const u = new URL(location.href);
+        u.searchParams.delete('pro');
+        u.searchParams.set('preview', '1');
+        history.replaceState(null, '', u.pathname + u.search + u.hash);
+      } catch (_) {}
+      invitePreviewOnlyMem = true;
+      try { sessionStorage.setItem('jl_preview_only', '1'); } catch (_) {}
+      updateBrandUi();
+      applyProPermissions();
+      updateProSendsBadge();
+      showToast('Licença usada — envios restantes: 0. Pague outro Pro para enviar de novo.');
+    }
+
+    function saveCheckoutDraft(draft) {
+      try {
+        sessionStorage.setItem('jl_checkout_draft', JSON.stringify(draft));
+      } catch (_) {}
+    }
+
+    function loadCheckoutDraft() {
+      try {
+        const raw = sessionStorage.getItem('jl_checkout_draft');
+        return raw ? JSON.parse(raw) : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function applyDraftPhonesToConfig(cfg) {
+      const draft = loadCheckoutDraft();
+      if (!draft) return cfg;
+      if (draft.whatsappInvitePhone) cfg.whatsappInvitePhone = normalizePhone(draft.whatsappInvitePhone);
+      if (draft.whatsappPhone) cfg.whatsappPhone = normalizePhone(draft.whatsappPhone);
+      if (draft.fromName) cfg.fromName = String(draft.fromName).slice(0, 40);
+      if (draft.toName) cfg.toName = String(draft.toName).slice(0, 40);
+      return cfg;
+    }
+
+    function updateBrandUi() {
+      const wm = document.getElementById('jl-watermark');
+      if (wm) {
+        /* Marca curta — CTAs ficam nos botões (evita sobrepor o deslize) */
+        if (isProUnlocked) {
+          wm.classList.add('is-pro');
+          wm.innerHTML = '<span>' + escapeHtml(BRAND.name) + ' Pro</span>';
+        } else {
+          wm.classList.remove('is-pro');
+          wm.textContent = BRAND.name;
+        }
+      }
+      const openVenda = document.getElementById('btn-open-venda');
+      if (openVenda) openVenda.hidden = !!isProUnlocked;
+      const price = document.getElementById('vd-price');
+      if (price) price.textContent = BRAND.priceLabel;
+      applyProPermissions();
+    }
+
+    /** Free = ver/preview. Pro = copiar, gerar link, enviar WhatsApp / Instagram (1 licença). */
+    function applyProPermissions() {
+      resolveProFromUrl();
+      const pro = isProActive();
+      document.querySelectorAll('.pro-gated').forEach((el) => {
+        el.classList.toggle('pro-locked', !pro);
+        el.setAttribute('aria-disabled', pro ? 'false' : 'true');
+        if (!pro) {
+          el.title = proLicenseConsumed
+            ? 'Licença já usada — pague de novo para enviar'
+            : 'Disponível no Pro após o pagamento';
+        } else el.removeAttribute('title');
+      });
+
+      /* Resposta final WA: bloqueada sempre que for prévia Free (mesmo com jl_pro antigo na sessão) */
+      const replyWa = document.getElementById('btn-whatsapp');
+      if (replyWa) {
+        const previewLock = isInvitePreviewOnly();
+        replyWa.classList.toggle('pro-locked', previewLock);
+        replyWa.setAttribute('aria-disabled', previewLock ? 'true' : 'false');
+        if (previewLock) {
+          replyWa.title = 'Prévia Free: WhatsApp real só no convite enviado (Pro)';
+        } else {
+          replyWa.removeAttribute('title');
+        }
+      }
+
+      const linkBox = document.getElementById('ed-link-preview');
+      if (linkBox) {
+        linkBox.classList.toggle('pro-blur', !pro);
+        if (!pro) {
+          linkBox.textContent = proLicenseConsumed
+            ? 'Licença usada. Pague outro Pro para gerar/copiar de novo.'
+            : 'Link oculto no plano grátis — desbloqueie o Pro para gerar e copiar.';
+        }
+      }
+
+      const freeMsg =
+        'Plano grátis: você pode montar e <strong>só ver</strong> o convite. ' +
+        'Após o pagamento Pro libera <strong>gerar link</strong>, <strong>copiar</strong> e <strong>enviar mensagem</strong> (1 vez). ' +
+        '<a href="?modo=venda">Desbloquear Pro (R$ 2,00)</a>';
+      const proMsg =
+        'Pro ativo: 1 envio liberado (WhatsApp, Instagram ou copiar link).';
+      const consumedMsg =
+        'Licença deste pagamento já foi usada. <a href="?modo=venda">Pagar de novo</a> para outro envio.';
+
+      ['pro-banner-editor', 'pro-banner-done'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.hidden = false;
+        el.classList.toggle('is-unlocked', pro);
+        el.innerHTML = proLicenseConsumed ? consumedMsg : (pro ? proMsg : freeMsg);
+      });
+      const lockBanner = document.getElementById('pro-banner-lock');
+      if (lockBanner) lockBanner.hidden = true;
+
+      const unlockBtn = document.getElementById('ed-unlock-pro');
+      if (unlockBtn) unlockBtn.hidden = pro;
+      updateProSendsBadge();
+    }
+
+    function requirePro(actionLabel) {
+      resolveProFromUrl();
+      /* Contador duro: só isProActive() (jl_sends_left > 0) libera envio */
+      if (!isProActive()) {
+        if (proLicenseConsumed || getSendsLeft() === 0) {
+          showToast('Licença usada. Pague de novo para ' + (actionLabel || 'enviar'));
+        } else {
+          showToast('Grátis = só ver. Pague o Pro para ' + (actionLabel || 'enviar/copiar'));
+        }
+        return false;
+      }
+      return true;
+    }
+
+    function goUnlockPro() {
+      /* Se a licença já foi gasta, não fingir que “Já paguei” revive o mesmo Pro */
+      if (proLicenseConsumed || readConsumedFlag()) {
+        showToast('Licença deste pagamento já usada. Faça um novo pagamento Pro.');
+      }
+      openVendaMode();
+    }
+
+    function buildInstagramCaption(cfg) {
+      const url = buildShareUrl(cfg);
+      return (
+        'Convite especial ✨\n\n' +
+        'Abre o link e desbloqueia:\n' +
+        url +
+        '\n\nCriado com ' + BRAND.name + ' ' + BRAND.igHandle
+      );
+    }
+
+    async function copyForInstagram(cfg) {
+      const text = buildInstagramCaption(cfg || appConfig);
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('Legenda + link copiados — cole no Stories ou no post');
+        consumeProLicense('instagram');
+      } catch (_) {
+        showToast('Copie manualmente o link do convite');
+        return;
+      }
+      /* Tenta abrir a câmera de Stories; em desktop/iOS pode falhar — ok */
+      try {
+        const a = document.createElement('a');
+        a.href = 'instagram://story-camera';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (_) {}
+    }
+
+    function showVenda(show) {
+      document.documentElement.classList.toggle('venda-open', show);
+      document.body.classList.toggle('venda-open', show);
+      const panel = document.getElementById('venda-panel');
+      if (panel) {
+        panel.setAttribute('aria-hidden', show ? 'false' : 'true');
+      }
+      if (show) {
+        showEditor(false);
+        const from = document.getElementById('vd-from');
+        const to = document.getElementById('vd-to');
+        if (from && !from.value) from.value = '';
+        if (to && !to.value) to.value = '';
+        updateVendaRecoverBtn();
+      }
+    }
+
+    function openVendaMode() {
+      resolveProFromUrl();
+      setInvitePreviewOnly(false);
+      const url = new URL(location.href);
+      url.searchParams.set('modo', 'venda');
+      url.searchParams.delete('pro');
+      url.hash = '';
+      history.replaceState(null, '', url.pathname + url.search);
+      showVenda(true);
+      updateBrandUi();
+      applyProPermissions();
+      if (proLicenseConsumed) {
+        setVendaPayStatus('Licença anterior já usada. Preencha de novo e pague outro Pro para enviar.');
+      }
+    }
+
+    function clearVendaMode() {
+      const url = new URL(location.href);
+      url.searchParams.delete('modo');
+      history.replaceState(null, '', url.pathname + (url.search || '') + url.hash);
+      showVenda(false);
+    }
+
+    function buildSalesWhatsappUrl(from, to) {
+      const phone = (BRAND.salesWhatsappE164 || '').replace(/\D/g, '');
+      const msg =
+        'Oi! Quero o white-label Jantar Link.\n\n' +
+        'Nomes no preview: ' + from + ' → ' + to + '\n' +
+        'Handle IG: ' + BRAND.igHandle + '\n\n' +
+        'Me passa o valor/PIX e o link Pro depois do pagamento.';
+      if (!phone) {
+        return null;
+      }
+      return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+    }
 
     /** Textos padrão com os nomes atuais — evita gravar o convite inteiro no link. */
     function personalizeDefaults(fromName, toName) {
@@ -1372,7 +2224,7 @@
           chef: !!x.chef
         })),
         finalPromises: DEFAULT_CONFIG.finalPromises.slice(),
-        pickupLine: 'vou te buscar 😊',
+        pickupLine: 'vou te buscar \u{1F60A}',
         whatsappMessageTemplate: DEFAULT_CONFIG.whatsappMessageTemplate
       };
     }
@@ -1498,6 +2350,24 @@
       return location.protocol === 'file:' || h === 'localhost' || h === '127.0.0.1';
     }
 
+    function localizeProUrl(proUrl) {
+      if (!proUrl || !isLocalHost()) return proUrl;
+      try {
+        const u = new URL(proUrl, location.href);
+        const hash = u.hash || '';
+        const pro = u.searchParams.get('pro') || 'JL-PRO-DEMO';
+        return (
+          location.origin +
+          '/index.html?pro=' +
+          encodeURIComponent(pro) +
+          '&modo=editor' +
+          hash
+        );
+      } catch (_) {
+        return proUrl;
+      }
+    }
+
     /** Link para copiar / WhatsApp — sempre o site público (não localhost). */
     function buildShareUrl(cfg) {
       const base = isLocalHost()
@@ -1508,9 +2378,12 @@
     }
 
     /** Pré-visualização local (Ver convite) — fica no host atual. */
-    function buildPreviewUrl(cfg) {
+    function buildPreviewUrl(cfg, opts) {
       const path = location.pathname.replace(/\/index\.html$/i, '/');
-      return location.origin + (path.endsWith('/') ? path : path + '/') + '#c=' + encodeConfig(cfg);
+      const root = location.origin + (path.endsWith('/') ? path : path + '/');
+      const free = !!(opts && opts.freePreview);
+      const q = free ? '?preview=1' : '';
+      return root + q + '#c=' + encodeConfig(cfg);
     }
 
     function escapeHtml(s) {
@@ -1570,6 +2443,7 @@
       }
 
       renderFoodOptions(cfg.foodOptions || []);
+      updateBrandUi();
     }
 
     function renderFoodOptions(options) {
@@ -2052,14 +2926,23 @@
       const dateStr = selectedDate ? formatDateLong(selectedDate) : 'A combinar';
       const foodStr = selectedFood || 'A combinar';
       const tpl = appConfig.whatsappMessageTemplate || DEFAULT_CONFIG.whatsappMessageTemplate;
-      return tpl
+      return String(tpl)
+        .replace(/\uFFFD/g, '')
         .split('{from}').join(appConfig.fromName)
         .split('{to}').join(appConfig.toName)
         .split('{food}').join(foodStr)
         .split('{date}').join(dateStr);
     }
 
-    document.getElementById('btn-whatsapp').addEventListener('click', () => {
+    document.getElementById('btn-whatsapp').addEventListener('click', (e) => {
+      /* URL ?preview=1 ou sessão de prévia Free — nunca abrir WA */
+      if (isInvitePreviewOnly()) {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast('Prévia Free: só ver. Pague o Pro para enviar o convite de verdade.');
+        return false;
+      }
+      resolveProFromUrl();
       const phone = (appConfig.whatsappPhone || '').replace(/\D/g, '');
       if (!phone) {
         alert('Este convite não tem WhatsApp configurado. Peça o número a quem te convidou 😊');
@@ -2068,9 +2951,13 @@
       const text = encodeURIComponent(buildWhatsAppMessage());
       window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
       playSuccess();
-    });
+      if (isProUnlocked && !proLicenseConsumed) {
+        consumeProLicense('invitee_reply');
+      }
+    }, true);
 
     document.getElementById('btn-back-editor').addEventListener('click', () => {
+      resolveProFromUrl();
       openEditorMode();
     });
 
@@ -2194,7 +3081,7 @@
       const resultEl = document.getElementById('ed-result');
       const lines = notifEl.value.split('\n').map((s) => s.trim()).filter(Boolean);
 
-      // Textos no modelo padrão: regenera com os nomes atuais (corrige Helder/Alexia antigos)
+      // Textos no modelo padrão: regenera com os nomes atuais (corrige Bruno/Lara antigos)
       if (looksLikeStandardNotif(lines)) {
         notifEl.value = expected.notifLines.join('\n');
       } else {
@@ -2297,8 +3184,10 @@
       const panel = document.getElementById('editor-panel');
       panel.setAttribute('aria-hidden', show ? 'false' : 'true');
       if (show) {
+        resolveProFromUrl();
         fillEditorForm(appConfig);
         updateEditorLinkPreview();
+        applyProPermissions();
         panel.scrollTop = 0;
       }
     }
@@ -2306,14 +3195,43 @@
     function updateEditorLinkPreview() {
       const cfg = readEditorForm();
       const url = buildShareUrl(cfg);
-      document.getElementById('ed-link-preview').textContent = url;
+      const box = document.getElementById('ed-link-preview');
       const warn = document.getElementById('ed-warn');
-      warn.classList.toggle('show', url.length > URL_SOFT_LIMIT);
+      if (!isProActive()) {
+        if (box) {
+          box.classList.add('pro-blur');
+          box.textContent = proLicenseConsumed
+            ? 'Licença usada. Pague outro Pro para gerar/copiar de novo.'
+            : 'Link oculto no plano grátis — desbloqueie o Pro para gerar e copiar.';
+        }
+        if (warn) warn.classList.remove('show');
+        return { cfg, url };
+      }
+      if (box) {
+        box.classList.remove('pro-blur');
+        box.textContent = url;
+      }
+      if (warn) warn.classList.toggle('show', url.length > URL_SOFT_LIMIT);
       return { cfg, url };
     }
 
-    /** Encurta o link (CleanURI → is.gd). Sem servidor próprio; se falhar, devolve o longo. */
+    /** Encurta o link: Worker local (sem CORS) → CleanURI → TinyURL → is.gd → longo. */
     async function shortenShareUrl(longUrl) {
+      const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+      if (base) {
+        try {
+          const res = await fetch(base + '/api/shorten', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: longUrl })
+          });
+          if (res.ok) {
+            const data = await res.json().catch(() => ({}));
+            if (data && data.shortUrl) return String(data.shortUrl).trim();
+          }
+        } catch (_) { /* fallback */ }
+      }
+
       try {
         const res = await fetch('https://cleanuri.com/api/v1/shorten', {
           method: 'POST',
@@ -2323,6 +3241,16 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.result_url) return String(data.result_url).trim();
+        }
+      } catch (_) { /* fallback */ }
+
+      try {
+        const res = await fetch(
+          'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(longUrl)
+        );
+        if (res.ok) {
+          const text = (await res.text()).trim();
+          if (text.indexOf('http') === 0) return text;
         }
       } catch (_) { /* fallback */ }
 
@@ -2360,9 +3288,16 @@
       });
 
     document.getElementById('ed-copy').addEventListener('click', async () => {
+      if (!requirePro('copiar/gerar o link')) {
+        goUnlockPro();
+        return;
+      }
       if (!requireEditorPhones()) return;
       const { url } = updateEditorLinkPreview();
       if (url.length > URL_SOFT_LIMIT) return;
+
+      /* Queima na hora — 1 clique = 1 licença, mesmo se o encurtador falhar depois */
+      consumeProLicense('copy_link');
 
       const btn = document.getElementById('ed-copy');
       const ok = document.getElementById('ed-ok');
@@ -2372,12 +3307,16 @@
       ok.classList.remove('show');
 
       const shortUrl = await shortenShareUrl(url);
-      document.getElementById('ed-link-preview').textContent = shortUrl;
+      const box = document.getElementById('ed-link-preview');
+      if (box) {
+        box.classList.remove('pro-blur');
+        box.textContent = shortUrl;
+      }
       await copyText(shortUrl);
 
       ok.textContent = shortUrl === url
-        ? 'Link copiado (encurtador indisponível — ficou o completo).'
-        : 'Link curto copiado!';
+        ? 'Link copiado (encurtador indisponível — ficou o completo). Envios: 0'
+        : 'Link curto copiado! Envios restantes: 0';
       ok.classList.add('show');
       btn.disabled = false;
       btn.textContent = prevLabel;
@@ -2424,10 +3363,36 @@
     }
 
     document.getElementById('ed-preview').addEventListener('click', () => {
-      launchInviteFromEditor();
+      /* Grátis: só visualizar — sem exigir WhatsApp nem gerar link compartilhado */
+      const cfg = readEditorForm();
+      applyConfig(cfg);
+      showEditor(false);
+      resetInviteToStart();
+      resolveProFromUrl();
+      const free = !isProActive();
+      if (free) {
+        try { sessionStorage.removeItem('jl_pro'); } catch (_) {}
+        isProUnlocked = false;
+      }
+      setInvitePreviewOnly(free);
+      applyProPermissions();
+      try {
+        const preview = new URL(buildPreviewUrl(cfg, { freePreview: free }));
+        history.replaceState(null, '', preview.pathname + preview.search + preview.hash);
+      } catch (_) {
+        history.replaceState(null, '', (free ? '?preview=1' : '') + '#c=' + encodeConfig(cfg));
+      }
+      showToast(free
+        ? 'Modo grátis: só visualização. Pague o Pro para copiar/enviar.'
+        : 'Preview Pro');
+      playChime();
     });
 
     document.getElementById('ed-send-wa').addEventListener('click', async () => {
+      if (!requirePro('enviar o link no WhatsApp')) {
+        goUnlockPro();
+        return;
+      }
       const phones = requireEditorPhones();
       if (!phones) return;
       const { cfg, url } = updateEditorLinkPreview();
@@ -2435,6 +3400,9 @@
         alert('Link longo demais. Encurte os textos e tente de novo.');
         return;
       }
+      /* Queima na hora */
+      consumeProLicense('whatsapp_invite');
+
       const btn = document.getElementById('ed-send-wa');
       const prevLabel = btn.textContent;
       btn.disabled = true;
@@ -2446,12 +3414,6 @@
       window.open('https://wa.me/' + phones.invite + '?text=' + encodeURIComponent(msg), '_blank');
       showEditor(false);
       resetInviteToStart();
-      try {
-        const preview = new URL(buildPreviewUrl(cfg));
-        history.replaceState(null, '', preview.pathname + preview.hash);
-      } catch (_) {
-        history.replaceState(null, '', '#c=' + encodeConfig(cfg));
-      }
       btn.disabled = false;
       btn.textContent = prevLabel;
       playSuccess();
@@ -2466,12 +3428,516 @@
       openEditorMode();
     });
 
+    const shareLock = document.getElementById('btn-share-ig-lock');
+    if (shareLock) {
+      shareLock.addEventListener('click', () => {
+        if (!requirePro('copiar para o Instagram')) {
+          goUnlockPro();
+          return;
+        }
+        copyForInstagram(appConfig);
+      });
+    }
+    const shareDone = document.getElementById('btn-share-ig-done');
+    if (shareDone) {
+      shareDone.addEventListener('click', () => {
+        if (!requirePro('copiar para o Instagram')) {
+          goUnlockPro();
+          return;
+        }
+        copyForInstagram(appConfig);
+      });
+    }
+
+    const edUnlock = document.getElementById('ed-unlock-pro');
+    if (edUnlock) edUnlock.addEventListener('click', () => goUnlockPro());
+
+    const btnOpenVenda = document.getElementById('btn-open-venda');
+    if (btnOpenVenda) btnOpenVenda.addEventListener('click', () => openVendaMode());
+
+    const vdBack = document.getElementById('vd-back');
+    if (vdBack) {
+      vdBack.addEventListener('click', () => {
+        clearVendaMode();
+        location.reload();
+      });
+    }
+
+    const vdEditor = document.getElementById('vd-editor');
+    if (vdEditor) {
+      vdEditor.addEventListener('click', () => {
+        showVenda(false);
+        openEditorMode();
+        applyProPermissions();
+        if (!isProActive()) {
+          showToast('Editor grátis: só ver. Enviar exige pagar o Pro.');
+        }
+      });
+    }
+
+    const vdPreview = document.getElementById('vd-preview');
+    if (vdPreview) {
+      vdPreview.addEventListener('click', () => {
+        const from = (document.getElementById('vd-from').value || '').trim() || DEFAULT_CONFIG.fromName;
+        const to = (document.getElementById('vd-to').value || '').trim() || DEFAULT_CONFIG.toName;
+        const cfg = personalizeDefaults(from, to);
+        cfg.whatsappInvitePhone = normalizePhone(
+          (document.getElementById('vd-invite-phone') || {}).value
+        );
+        cfg.whatsappPhone = normalizePhone((document.getElementById('vd-reply-phone') || {}).value);
+        applyConfig(cfg);
+        showVenda(false);
+        showEditor(false);
+        resetInviteToStart();
+        try { sessionStorage.removeItem('jl_pro'); } catch (_) {}
+        isProUnlocked = false;
+        invitePreviewOnlyMem = true;
+        try { sessionStorage.setItem('jl_preview_only', '1'); } catch (_) {}
+        try {
+          const preview = new URL(buildPreviewUrl(cfg, { freePreview: true }));
+          history.replaceState(null, '', preview.pathname + preview.search + preview.hash);
+        } catch (_) {
+          history.replaceState(null, '', '?preview=1#c=' + encodeConfig(cfg));
+        }
+        applyProPermissions();
+        showToast('Preview Free: só visualizar. Envio só após pagar o Pro. (URL deve ter preview=1)');
+        playSuccess();
+      });
+    }
+
+    const vdWa = document.getElementById('vd-whatsapp');
+    if (vdWa) {
+      vdWa.addEventListener('click', () => {
+        const from = (document.getElementById('vd-from').value || '').trim() || '—';
+        const to = (document.getElementById('vd-to').value || '').trim() || '—';
+        const link = buildSalesWhatsappUrl(from, to);
+        if (!link) {
+          showToast('Defina BRAND.salesWhatsappE164 no código ou use o playbook HITL');
+          return;
+        }
+        window.open(link, '_blank');
+      });
+    }
+
+    function setVendaPayStatus(msg) {
+      const el = document.getElementById('vd-pay-status');
+      if (el) el.textContent = msg || '';
+      const wait = document.getElementById('vd-pay-wait-status');
+      if (wait && msg) wait.textContent = msg;
+    }
+
+    let paidPollTimer = 0;
+    let paidPollOrder = '';
+    let openingPro = false;
+
+    function showPayWait(open) {
+      const el = document.getElementById('vd-pay-wait');
+      if (!el) return;
+      el.hidden = !open;
+      el.classList.toggle('is-open', !!open);
+    }
+
+    function stopPaidPoll() {
+      if (paidPollTimer) {
+        clearInterval(paidPollTimer);
+        paidPollTimer = 0;
+      }
+    }
+
+    function startPaidPoll(orderId) {
+      stopPaidPoll();
+      paidPollOrder = orderId || '';
+      if (!paidPollOrder) return;
+      showPayWait(true);
+      setVendaPayStatus('Aguardando o Mercado Pago confirmar… não feche esta aba.');
+      paidPollTimer = setInterval(function () {
+        openProFromPaidOrder(paidPollOrder, { quiet: true });
+      }, 2500);
+      openProFromPaidOrder(paidPollOrder, { quiet: true });
+    }
+
+    function checkoutApiIsUnreachableFromHere() {
+      const base = BRAND.checkoutApiBase || '';
+      const localApi = /127\.0\.0\.1|localhost/.test(base);
+      return localApi && location.hostname === 'helderabud.github.io';
+    }
+
+    async function startCheckoutPay() {
+      const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+      if (!base) {
+        showToast('Configure BRAND.checkoutApiBase (Worker)');
+        return;
+      }
+      const from = (document.getElementById('vd-from').value || '').trim();
+      const to = (document.getElementById('vd-to').value || '').trim();
+      const invite = normalizePhone((document.getElementById('vd-invite-phone') || {}).value);
+      const reply = normalizePhone((document.getElementById('vd-reply-phone') || {}).value);
+      if (!from || !to) {
+        showToast('Preencha os dois nomes antes de pagar');
+        return;
+      }
+      if (!isValidPhone(reply)) {
+        showToast('Informe seu WhatsApp (receber a resposta)');
+        document.getElementById('vd-reply-phone').focus();
+        return;
+      }
+      if (!isValidPhone(invite)) {
+        showToast('Informe o WhatsApp de quem recebe o convite');
+        document.getElementById('vd-invite-phone').focus();
+        return;
+      }
+      const btn = document.getElementById('vd-pay');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Abrindo checkout…';
+      }
+      setVendaPayStatus('Criando pedido…');
+      try {
+        const cfg = personalizeDefaults(from, to);
+        cfg.whatsappInvitePhone = invite;
+        cfg.whatsappPhone = reply;
+        const configPayload = encodeConfig(cfg);
+        const draft = {
+          fromName: from,
+          toName: to,
+          whatsappInvitePhone: invite,
+          whatsappPhone: reply
+        };
+        saveCheckoutDraft(draft);
+
+        const res = await fetch(base + '/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fromName: from,
+            toName: to,
+            contact: '',
+            configPayload: configPayload,
+            invitePhone: invite,
+            replyPhone: reply
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.error === 'test_token_not_allowed' || data.error === 'sandbox_checkout_not_allowed') {
+          setVendaPayStatus(
+            'O Worker ainda tem token de TESTE do Mercado Pago. No PowerShell: npx wrangler secret put MP_ACCESS_TOKEN (produção, sem TEST-) e depois Pagar Pro de novo.'
+          );
+          showToast('Token MP de teste no Worker');
+          return;
+        }
+        if (!res.ok || !data.checkoutUrl) {
+          setVendaPayStatus('Falha no checkout. Use WhatsApp HITL ou suba o Worker.');
+          showToast('Checkout indisponível');
+          return;
+        }
+        if (/sandbox\.mercadopago/i.test(data.checkoutUrl)) {
+          setVendaPayStatus(
+            'O checkout veio sandbox. Confirme a URL com &api=cf e o Access Token de produção no Worker.'
+          );
+          showToast('Checkout sandbox — não pague');
+          return;
+        }
+        try {
+          if (data.orderId) {
+            sessionStorage.setItem('jl_order_id', data.orderId);
+            localStorage.setItem('jl_order_id', data.orderId);
+          }
+        } catch (_) {}
+
+        /* Não redireciona logo: mostra link simples para voltar ao app (localhost fica preso no MP) */
+        const orderId = data.orderId || '';
+        const returnUrl =
+          location.origin +
+          location.pathname.replace(/\/index\.html$/i, '/') +
+          '?modo=venda&pago=1&order=' +
+          encodeURIComponent(orderId);
+        try {
+          sessionStorage.setItem('jl_return_url', returnUrl);
+          if (data.checkoutUrl) sessionStorage.setItem('jl_mp_checkout', data.checkoutUrl);
+        } catch (_) {}
+
+        const box = document.getElementById('vd-return-box');
+        const goMp = document.getElementById('vd-go-mp');
+        if (box) box.hidden = false;
+        if (goMp && data.checkoutUrl) {
+          goMp.href = data.checkoutUrl;
+          goMp.hidden = false;
+        }
+        updateVendaRecoverBtn();
+        setVendaPayStatus(
+          'Mercado Pago abriu noutra janela. Não feche esta aba — o editor abre sozinho quando pagar.'
+        );
+        showToast('Deixe esta aba aberta');
+        if (data.checkoutUrl) {
+          window.open(data.checkoutUrl, '_blank');
+        }
+        if (orderId) startPaidPoll(orderId);
+      } catch (err) {
+        console.error(err);
+        setVendaPayStatus('Worker offline? Rode: cd commerce/worker && npm run dev:mp');
+        showToast('Não conectou no Worker (8787)');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '💳 Pagar Pro (checkout)';
+        }
+      }
+    }
+
+    async function openProFromPaidOrder(orderId, opts) {
+      const quiet = !!(opts && opts.quiet);
+      const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+      if (!base || !orderId || openingPro) return false;
+      if (checkoutApiIsUnreachableFromHere()) {
+        setVendaPayStatus(
+          'Pagamento recebido nesta página. Volte à aba do Jantar Link no computador — o editor abre lá.'
+        );
+        return false;
+      }
+      if (!quiet) setVendaPayStatus('Confirmando pagamento e abrindo editor…');
+      try {
+        try {
+          await fetch(base + '/api/orders/' + encodeURIComponent(orderId) + '/sync', {
+            method: 'POST'
+          });
+        } catch (_) { /* ignore */ }
+
+        const res = await fetch(
+          base + '/api/orders/' + encodeURIComponent(orderId) + '?sync=1'
+        );
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 404) {
+          setVendaPayStatus(
+            'Pedido não encontrado neste Worker. Abra de novo com &api=cf na URL (Cloudflare), sem o :8787.'
+          );
+          showToast('Pedido não encontrado no Worker');
+          return false;
+        }
+        if (data.status === 'paid' && data.proUrl) {
+          if (data.consumed) {
+            setVendaPayStatus('Este pedido já usou a licença de envio.');
+            showToast('Licença já consumida — pague de novo');
+            return true;
+          }
+          try {
+            if (localStorage.getItem('jl_order_consumed_' + orderId) === '1') {
+              setVendaPayStatus('Este pagamento já foi usado neste browser. Pague outro Pro.');
+              showToast('Licença já usada — novo pagamento necessário');
+              return true;
+            }
+          } catch (_) {}
+          grantProLicense(orderId);
+          try {
+            if (data.invitePhone || data.replyPhone) {
+              saveCheckoutDraft({
+                fromName: data.fromName,
+                toName: data.toName,
+                whatsappInvitePhone: data.invitePhone || '',
+                whatsappPhone: data.replyPhone || ''
+              });
+            }
+          } catch (_) {}
+          setVendaPayStatus('Pagamento ok! Abrindo editor — a mensagem ainda NÃO foi enviada.');
+          showToast('Pro ativo: 1 envio restante');
+          openingPro = true;
+          stopPaidPoll();
+          showPayWait(false);
+          location.href = localizeProUrl(data.proUrl);
+          return true;
+        }
+        if (!quiet) {
+          setVendaPayStatus(
+            'Pedido: ' + (data.status || 'pendente') +
+              ' (id ' + orderId + '). Se o MP já aprovou, espera 10s e clica de novo em Já paguei.'
+          );
+        }
+        return false;
+      } catch (e) {
+        console.error(e);
+        setVendaPayStatus('Não foi possível consultar o pedido. Worker em 8787?');
+        return false;
+      }
+    }
+
+    function readStoredOrderId() {
+      try {
+        return sessionStorage.getItem('jl_order_id') || localStorage.getItem('jl_order_id') || '';
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function updateVendaRecoverBtn() {
+      const btn = document.getElementById('vd-recover');
+      const box = document.getElementById('vd-return-box');
+      const oid = readStoredOrderId();
+      if (btn) btn.style.display = oid ? 'block' : 'none';
+      if (box && oid) {
+        box.hidden = false;
+        try {
+          const mp = sessionStorage.getItem('jl_mp_checkout');
+          const goMp = document.getElementById('vd-go-mp');
+          if (goMp && mp) {
+            goMp.href = mp;
+            goMp.hidden = false;
+          }
+        } catch (_) {}
+      }
+    }
+
+    async function handleVendaPaymentReturn() {
+      const params = new URLSearchParams(location.search);
+      const orderId = params.get('order');
+      const mockPay = params.get('mock_pay');
+      const pago = params.get('pago');
+      if (!orderId) {
+        updateVendaRecoverBtn();
+        return;
+      }
+
+      openVendaMode();
+      updateVendaRecoverBtn();
+      if (checkoutApiIsUnreachableFromHere()) {
+        setVendaPayStatus(
+          'Pode fechar esta aba e voltar ao Jantar Link local. O editor abre na aba onde você clicou Pagar Pro.'
+        );
+        return;
+      }
+      const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+      if (!base) return;
+
+      if (mockPay === '1') {
+        setVendaPayStatus('Confirmando pagamento mock…');
+        try {
+          await fetch(base + '/api/webhooks/mercadopago', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mock: true, orderId: orderId })
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      if (pago === '0') {
+        setVendaPayStatus('Pagamento não concluído. Tente de novo ou use HITL.');
+        return;
+      }
+
+      await openProFromPaidOrder(orderId);
+    }
+
+    const vdPay = document.getElementById('vd-pay');
+    if (vdPay) vdPay.addEventListener('click', () => startCheckoutPay());
+
+    async function unlockProLocalTest() {
+      if (!isLocalHost()) {
+        showToast('Só disponível em localhost');
+        return;
+      }
+      const from = (document.getElementById('vd-from').value || '').trim() || 'Tu';
+      const to = (document.getElementById('vd-to').value || '').trim() || 'Convidada';
+      const invite = normalizePhone((document.getElementById('vd-invite-phone') || {}).value) || '5561999999999';
+      const reply = normalizePhone((document.getElementById('vd-reply-phone') || {}).value) || invite;
+      const cfg = personalizeDefaults(from, to);
+      cfg.whatsappInvitePhone = invite;
+      cfg.whatsappPhone = reply;
+      saveCheckoutDraft({
+        fromName: from,
+        toName: to,
+        whatsappInvitePhone: invite,
+        whatsappPhone: reply
+      });
+      localStorage.removeItem('jl_sends_left');
+      sessionStorage.removeItem('jl_sends_left');
+      grantProLicense('local-test');
+      const payload = encodeConfig(cfg);
+      setVendaPayStatus('Pro liberado em teste local (sem MP).');
+      showToast('Pro local ativo — 1 envio');
+      location.href =
+        location.pathname.replace(/\/index\.html$/i, '/') +
+        '?pro=JL-PRO-DEMO&modo=editor#c=' +
+        payload;
+    }
+
+    const vdLocal = document.getElementById('vd-local-unlock');
+    if (vdLocal) {
+      vdLocal.hidden = !isLocalHost();
+      vdLocal.addEventListener('click', () => unlockProLocalTest());
+    }
+
+    async function returnToAppAfterPay() {
+      const oid = readStoredOrderId();
+      if (!oid) {
+        showToast('Nenhum pedido recente. Pague de novo.');
+        return;
+      }
+      const ok = await openProFromPaidOrder(oid);
+      if (!ok) {
+        setVendaPayStatus('Ainda não sincronizou. Espere uns segundos — esta tela tenta sozinha.');
+        startPaidPoll(oid);
+      }
+    }
+
+    const vdReturnBtn = document.getElementById('vd-return-btn');
+    if (vdReturnBtn) vdReturnBtn.addEventListener('click', () => returnToAppAfterPay());
+
+    const vdPayWaitOpen = document.getElementById('vd-pay-wait-open');
+    if (vdPayWaitOpen) vdPayWaitOpen.addEventListener('click', () => returnToAppAfterPay());
+    const vdPayWaitCancel = document.getElementById('vd-pay-wait-cancel');
+    if (vdPayWaitCancel) {
+      vdPayWaitCancel.addEventListener('click', () => {
+        stopPaidPoll();
+        showPayWait(false);
+        setVendaPayStatus('Pagamento cancelado nesta tela. Se já pagou, clique em Já paguei.');
+      });
+    }
+
+    window.addEventListener('message', (ev) => {
+      const data = ev && ev.data;
+      if (!data || data.type !== 'jl-mp-paid' || !data.orderId) return;
+      const originOk =
+        ev.origin === location.origin ||
+        ev.origin === 'https://helderabud.github.io' ||
+        ev.origin === 'http://127.0.0.1:5177' ||
+        ev.origin === 'http://localhost:5177';
+      if (!originOk) return;
+      startPaidPoll(data.orderId);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && paidPollOrder) {
+        openProFromPaidOrder(paidPollOrder, { quiet: true });
+      }
+    });
+
+    const vdRecover = document.getElementById('vd-recover');
+    if (vdRecover) {
+      vdRecover.addEventListener('click', async () => {
+        const oid = readStoredOrderId();
+        if (!oid) {
+          showToast('Nenhum pedido recente. Pague de novo.');
+          return;
+        }
+        vdRecover.disabled = true;
+        await openProFromPaidOrder(oid);
+        vdRecover.disabled = false;
+        updateVendaRecoverBtn();
+      });
+    }
+
     function openEditorMode() {
+      showVenda(false);
+      resolveProFromUrl();
       const url = new URL(location.href);
       url.searchParams.set('modo', 'editor');
+      /* Não reintroduzir ?pro= se a licença já foi gasta */
+      if (proLicenseConsumed) url.searchParams.delete('pro');
       url.hash = 'editor';
       history.replaceState(null, '', url.pathname + url.search + url.hash);
       showEditor(true);
+      updateBrandUi();
+      applyProPermissions();
     }
 
     function clearEditorMode() {
@@ -2481,26 +3947,65 @@
       history.replaceState(null, '', url.pathname + (url.search || '') + url.hash);
     }
 
-    /* ── Boot: ?modo=editor / #editor / #c= ── */
+    /* ── Boot: ?modo=editor|venda / #editor / #c= / ?pro= / ?embed=1 ── */
     function bootFromHash() {
+      resolveProFromUrl();
       const params = new URLSearchParams(location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('embed-demo');
+      }
       const modo = (params.get('modo') || '').toLowerCase();
       const hash = location.hash.slice(1);
+      const isPreview = params.get('preview') === '1';
 
-      // #c= tem prioridade (convite personalizado), mesmo se ?modo=editor sobrar na URL
+      if (isPreview) {
+        invitePreviewOnlyMem = true;
+        try { sessionStorage.setItem('jl_preview_only', '1'); } catch (_) {}
+        try { sessionStorage.removeItem('jl_pro'); } catch (_) {}
+        isProUnlocked = false;
+      }
+
       if (hash.startsWith('c=')) {
         const decoded = decodeConfigPayload(hash.slice(2));
-        applyConfig(decoded || DEFAULT_CONFIG);
+        let cfg = decoded || DEFAULT_CONFIG;
+        if ((modo === 'editor' || isProUnlocked) && !isPreview) {
+          cfg = applyDraftPhonesToConfig(cfg);
+        }
+        applyConfig(cfg);
+        if (modo === 'editor' && !isPreview) {
+          showVenda(false);
+          showEditor(true);
+          updateBrandUi();
+          applyProPermissions();
+          return;
+        }
         showEditor(false);
+        showVenda(false);
+        updateBrandUi();
+        applyProPermissions();
+        return;
+      }
+      if (modo === 'venda') {
+        applyConfig(DEFAULT_CONFIG);
+        showEditor(false);
+        showVenda(true);
+        updateBrandUi();
         return;
       }
       if (modo === 'editor' || hash === 'editor' || hash.startsWith('editor')) {
-        applyConfig(DEFAULT_CONFIG);
+        let cfg = DEFAULT_CONFIG;
+        if (isProUnlocked) cfg = applyDraftPhonesToConfig(JSON.parse(JSON.stringify(DEFAULT_CONFIG)));
+        applyConfig(cfg);
+        showVenda(false);
         showEditor(true);
+        updateBrandUi();
         return;
       }
       applyConfig(DEFAULT_CONFIG);
       showEditor(false);
+      showVenda(false);
+      updateBrandUi();
+      applyProPermissions();
     }
 
     window.addEventListener('hashchange', () => {
@@ -2510,6 +4015,7 @@
     });
 
     bootFromHash();
+    handleVendaPaymentReturn();
   </script>
 </body>
 </html>
