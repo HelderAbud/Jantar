@@ -193,9 +193,7 @@
   function showLiveApp() {
     if (!liveFrame || !phone) return;
     liveFrame.hidden = false;
-    if (!liveFrame.getAttribute("src")) {
-      liveFrame.src = "../";
-    }
+    liveFrame.src = "../?embed=1";
     phone.classList.add("is-live");
     if (liveBtn) liveBtn.textContent = "Ver slides LinkedIn";
   }

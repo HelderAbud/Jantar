@@ -16,7 +16,7 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 - **Stack:** HTML + CSS + JavaScript vanilla (arquivo único `index.html`).
 - **Deploy:** GitHub Pages em [HelderAbud/Jantar](https://github.com/HelderAbud/Jantar).
 - **URL pública:** https://helderabud.github.io/Jantar/
-- **Instagram (Fase 1):** marca **Jantar Link** · handle atual `@basicmodaeacessorios` (alvo `@jantarlink` se livre).
+- **Instagram (Fase 1):** marca **Jantar Link** · conta **`@convitejantar`** (nome: ConviteJantar).
 - **Tom:** divertido, moderno, leve — **sem** parecer pedido de namoro explícito.
 - **Plano comercial:** `.cursor/plans/plan-2026-07-27-instagram-venda-white-label-3-fases.md` (F1–F3 + F4 IG-API opcional)
 - **Pagamento F2:** ADR `docs/adr/0001-pagamento-mercado-pago-worker.md` · Worker `commerce/worker/`
