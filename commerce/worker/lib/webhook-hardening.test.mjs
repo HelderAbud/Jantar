@@ -76,6 +76,7 @@ function stubMpPayment(payment) {
 async function seedPending(env, id = 'ord_hard1') {
   const order = {
     id,
+    orderSecret: 'ab'.repeat(32),
     status: 'pending',
     fromName: 'Bruno',
     toName: 'Lara',
@@ -115,7 +116,8 @@ describe('consume paid only', () => {
       env,
       'POST',
       '/api/orders/' + created.json.orderId + '/consume',
-      { reason: 'outbound' }
+      { reason: 'outbound' },
+      { 'X-Order-Secret': created.json.orderSecret }
     );
     assert.equal(consumed.status, 409);
     assert.equal(consumed.json.error, 'not_paid');
@@ -134,13 +136,15 @@ describe('consume paid only', () => {
       env,
       'POST',
       '/api/orders/' + created.json.orderId + '/consume',
-      {}
+      {},
+      { 'X-Order-Secret': created.json.orderSecret }
     );
     const second = await call(
       env,
       'POST',
       '/api/orders/' + created.json.orderId + '/consume',
-      {}
+      {},
+      { 'X-Order-Secret': created.json.orderSecret }
     );
     assert.equal(first.status, 200);
     assert.equal(second.status, 200);
@@ -214,7 +218,9 @@ describe('webhook signature and amount', () => {
       });
       assert.equal(res.status, 200);
       assert.equal(res.json.error, 'amount_mismatch');
-      const got = await call(env, 'GET', '/api/orders/ord_amtbad');
+      const got = await call(env, 'GET', '/api/orders/ord_amtbad', null, {
+        'X-Order-Secret': 'ab'.repeat(32)
+      });
       assert.equal(got.json.status, 'pending');
       assert.equal(got.json.proUrl, null);
     } finally {
@@ -261,9 +267,11 @@ describe('webhook signature and amount', () => {
       );
       assert.equal(res.status, 200);
       assert.equal(res.json.status, 'paid');
-      const got = await call(env, 'GET', '/api/orders/ord_amtok');
+      const got = await call(env, 'GET', '/api/orders/ord_amtok', null, {
+        'X-Order-Secret': 'ab'.repeat(32)
+      });
       assert.equal(got.json.status, 'paid');
-      assert.match(got.json.proUrl, /pro=JL-PRO-DEMO/);
+      assert.match(got.json.proUrl, /pro=jl_/);
     } finally {
       restore();
     }

@@ -10,7 +10,8 @@ import { buildMpReturnUrls, pickMpCheckoutUrl } from '../lib/checkout-urls.mjs';
 import {
   paymentAmountMatches,
   verifyMpWebhookSignature,
-  webhookSignatureRequired
+  webhookSignatureRequired,
+  timingSafeEqualHex
 } from '../lib/mp-webhook-security.mjs';
 
 const ALLOWED_ORIGINS = [
@@ -57,7 +58,8 @@ export default {
         kvErr &&
         (url.pathname === '/api/checkout' ||
           url.pathname.startsWith('/api/orders/') ||
-          url.pathname === '/api/webhooks/mercadopago')
+          url.pathname === '/api/webhooks/mercadopago' ||
+          url.pathname === '/api/licenses/pro')
       ) {
         return cors(request, kvErr);
       }
@@ -66,20 +68,24 @@ export default {
         return cors(request, await handleCheckout(request, env));
       }
 
+      if (url.pathname === '/api/licenses/pro' && request.method === 'GET') {
+        return cors(request, await handleLicensePro(request, env));
+      }
+
       const consumeMatch = url.pathname.match(/^\/api\/orders\/([^/]+)\/consume$/);
       if (consumeMatch && request.method === 'POST') {
-        return cors(request, await handleConsumeOrder(consumeMatch[1], env));
+        return cors(request, await handleConsumeOrder(request, consumeMatch[1], env));
       }
 
       const syncMatch = url.pathname.match(/^\/api\/orders\/([^/]+)\/sync$/);
       if (syncMatch && request.method === 'POST') {
-        return cors(request, await handleSyncOrder(syncMatch[1], env));
+        return cors(request, await handleSyncOrder(request, syncMatch[1], env));
       }
 
       const orderMatch = url.pathname.match(/^\/api\/orders\/([^/]+)$/);
       if (orderMatch && request.method === 'GET') {
         const sync = url.searchParams.get('sync') === '1';
-        return cors(request, await handleGetOrder(orderMatch[1], env, sync));
+        return cors(request, await handleGetOrder(request, orderMatch[1], env, sync));
       }
 
       if (
@@ -105,7 +111,7 @@ function cors(request, response) {
     headers.set('Vary', 'Origin');
   }
   headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Order-Secret');
   headers.set('Access-Control-Max-Age', '86400');
   return new Response(response.body, { status: response.status, headers });
 }
@@ -161,6 +167,40 @@ function orderPublic(order) {
   };
 }
 
+function randomHex(bytes) {
+  const buf = new Uint8Array(bytes);
+  crypto.getRandomValues(buf);
+  return [...buf].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function providedOrderSecret(request) {
+  const url = new URL(request.url);
+  return String(request.headers.get('X-Order-Secret') || url.searchParams.get('secret') || '').trim();
+}
+
+function orderSecretOk(order, provided) {
+  return !!(order && order.orderSecret && provided && timingSafeEqualHex(order.orderSecret, provided));
+}
+
+function denyOrder() {
+  return json({ error: 'unauthorized' }, 401);
+}
+
+async function rateLimitCheckout(request, env) {
+  const ip = String(
+    request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'local'
+  )
+    .split(',')[0]
+    .trim()
+    .slice(0, 80);
+  const bucket = Math.floor(Date.now() / 60000);
+  const key = `rl:checkout:${ip}:${bucket}`;
+  const n = parseInt((await kvGet(env, key)) || '0', 10) || 0;
+  if (n >= 10) return json({ error: 'rate_limited' }, 429);
+  await kvPut(env, key, String(n + 1), { expirationTtl: 120 });
+  return null;
+}
+
 function appBase(env) {
   const origin = (env.PUBLIC_APP_ORIGIN || 'http://127.0.0.1:5177').replace(/\/$/, '');
   let path = env.PUBLIC_APP_PATH || '/';
@@ -202,7 +242,11 @@ async function handleCheckout(request, env) {
     return json({ error: 'names_required' }, 400);
   }
 
+  const limited = await rateLimitCheckout(request, env);
+  if (limited) return limited;
+
   const orderId = newId();
+  const orderSecret = randomHex(32);
   const amount = moneyCentavos(env);
   const base = appBase(env);
   const returns = buildMpReturnUrls({
@@ -217,6 +261,7 @@ async function handleCheckout(request, env) {
 
   const order = {
     id: orderId,
+    orderSecret,
     status: 'pending',
     fromName,
     toName,
@@ -272,6 +317,7 @@ async function handleCheckout(request, env) {
 
   return json({
     orderId,
+    orderSecret,
     checkoutUrl,
     mock: isMock(env),
     amountCentavos: amount
@@ -322,31 +368,34 @@ async function createMpPreference(env, opts) {
   return data;
 }
 
-async function handleGetOrder(orderId, env, sync) {
+async function handleGetOrder(request, orderId, env, sync) {
   const id = String(orderId || '').slice(0, 40);
   const raw = await kvGet(env, `order:${id}`);
   if (!raw) return json({ error: 'not_found' }, 404);
   let order = JSON.parse(raw);
+  if (!orderSecretOk(order, providedOrderSecret(request))) return denyOrder();
   if (sync && order.status === 'pending' && !isMock(env)) {
     order = await syncOrderFromMp(env, order);
   }
   return json(orderPublic(order));
 }
 
-async function handleSyncOrder(orderId, env) {
+async function handleSyncOrder(request, orderId, env) {
   const id = String(orderId || '').slice(0, 40);
   const raw = await kvGet(env, `order:${id}`);
   if (!raw) return json({ error: 'not_found' }, 404);
   let order = JSON.parse(raw);
+  if (!orderSecretOk(order, providedOrderSecret(request))) return denyOrder();
   if (!isMock(env)) order = await syncOrderFromMp(env, order);
   return json(orderPublic(order));
 }
 
-async function handleConsumeOrder(orderId, env) {
+async function handleConsumeOrder(request, orderId, env) {
   const id = String(orderId || '').slice(0, 40);
   const raw = await kvGet(env, `order:${id}`);
   if (!raw) return json({ error: 'not_found' }, 404);
   const order = JSON.parse(raw);
+  if (!orderSecretOk(order, providedOrderSecret(request))) return denyOrder();
   if (order.status !== 'paid') return json({ error: 'not_paid' }, 409);
   if (order.consumed) {
     return json({ ok: true, id: order.id, consumed: true, consumedAt: order.consumedAt });
@@ -389,7 +438,7 @@ async function syncOrderFromMp(env, order) {
 async function fulfillOrder(env, order) {
   if (order.status === 'paid' && order.proUrl) return order;
 
-  const proToken = env.PRO_TOKEN || 'JL-PRO-DEMO';
+  const proToken = 'jl_' + randomHex(16);
   const base = appBase(env);
   const payload = order.configPayload
     ? order.configPayload
@@ -398,9 +447,27 @@ async function fulfillOrder(env, order) {
   const proUrl = `${base}?pro=${encodeURIComponent(proToken)}&modo=editor#c=${payload}`;
   order.status = 'paid';
   order.paidAt = new Date().toISOString();
+  order.proToken = proToken;
   order.proUrl = proUrl;
+  await kvPut(env, `pro:${proToken}`, order.id, { expirationTtl: 60 * 60 * 24 * 30 });
   await kvPut(env, `order:${order.id}`, JSON.stringify(order), { expirationTtl: 60 * 60 * 24 * 30 });
   return order;
+}
+
+async function handleLicensePro(request, env) {
+  const url = new URL(request.url);
+  const token = String(url.searchParams.get('token') || '').trim();
+  if (!token || token.length > 96) return json({ error: 'unauthorized' }, 401);
+  const origin = request.headers.get('Origin') || '';
+  const local = /127\.0\.0\.1|localhost/.test(origin);
+  if (token === 'JL-PRO-DEMO') {
+    if (isPublicApp(env)) return json({ error: 'unauthorized' }, 401);
+    if (local || isMock(env)) return json({ ok: true, demo: true });
+    return json({ error: 'unauthorized' }, 401);
+  }
+  const orderId = await kvGet(env, `pro:${token}`);
+  if (!orderId) return json({ error: 'unauthorized' }, 401);
+  return json({ ok: true, orderId: String(orderId) });
 }
 
 /** Payload mínimo Base64URL {f,t} — espelha compact do front. */

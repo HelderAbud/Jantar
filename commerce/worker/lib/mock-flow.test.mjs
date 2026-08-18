@@ -56,7 +56,7 @@ describe('mock checkout flow', () => {
     assert.equal(created.status, 200);
     const order = await created.json();
     assert.ok(order.orderId);
-    assert.match(order.checkoutUrl, /mock_pay=1/);
+    assert.ok(order.orderSecret);
 
     const paid = await fetch(BASE + '/api/webhooks/mercadopago', {
       method: 'POST',
@@ -66,8 +66,15 @@ describe('mock checkout flow', () => {
     assert.equal(paid.status, 200);
     const fulfill = await paid.json();
     assert.equal(fulfill.status, 'paid');
-    assert.match(fulfill.proUrl, /127\.0\.0\.1:5177/);
-    assert.match(fulfill.proUrl, /pro=JL-PRO-DEMO/);
-    assert.match(fulfill.proUrl, /modo=editor/);
+    assert.equal(fulfill.proUrl, undefined);
+
+    const got = await fetch(BASE + '/api/orders/' + order.orderId, {
+      headers: { 'X-Order-Secret': order.orderSecret }
+    });
+    const paidOrder = await got.json();
+    assert.equal(got.status, 200);
+    assert.match(paidOrder.proUrl, /127\.0\.0\.1:5177/);
+    assert.match(paidOrder.proUrl, /pro=jl_/);
+    assert.match(paidOrder.proUrl, /modo=editor/);
   });
 });

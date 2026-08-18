@@ -9,7 +9,7 @@
     "dev": "wrangler dev",
     "dev:mock": "node mock-server.mjs",
     "dev:mp": "node --use-system-ca mp-server.mjs",
-    "test": "node --test ./lib/checkout-urls.test.mjs ./lib/mock-flow.test.mjs ./lib/worker-parity.test.mjs ./lib/webhook-hardening.test.mjs",
+    "test": "node --test ./lib/checkout-urls.test.mjs ./lib/mock-flow.test.mjs ./lib/worker-parity.test.mjs ./lib/webhook-hardening.test.mjs ./lib/order-auth.test.mjs",
     "smoke": "node --use-system-ca scripts/smoke-check.mjs",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail"

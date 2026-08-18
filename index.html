@@ -1745,7 +1745,7 @@
 
     const URL_SOFT_LIMIT = 2000;
 
-    /** Marca comercial F1 — token Pro frágil (só HITL). Troque antes de vender de verdade. */
+    /** Marca comercial F1. JL-PRO-DEMO só vale em localhost. Produção usa token por pedido. */
     const BRAND = {
       name: 'Jantar Link',
       igHandle: '@convitejantar',
@@ -1906,6 +1906,31 @@
       );
     }
 
+    function isLocalInviteHost() {
+      const h = location.hostname;
+      return h === '127.0.0.1' || h === 'localhost';
+    }
+
+    function orderAuthHeaders(orderId) {
+      const headers = { 'Content-Type': 'application/json' };
+      try {
+        const secret =
+          sessionStorage.getItem('jl_order_secret_' + (orderId || '')) ||
+          sessionStorage.getItem('jl_order_secret') ||
+          '';
+        if (secret) headers['X-Order-Secret'] = secret;
+      } catch (_) {}
+      return headers;
+    }
+
+    function saveOrderSecret(orderId, secret) {
+      if (!orderId || !secret) return;
+      try {
+        sessionStorage.setItem('jl_order_secret', secret);
+        sessionStorage.setItem('jl_order_secret_' + orderId, secret);
+      } catch (_) {}
+    }
+
     function stripProQuery() {
       try {
         const u = new URL(location.href);
@@ -1936,21 +1961,55 @@
         return;
       }
 
-      /* Nunca ganhou (-1): aceita ?pro= ou sessão */
+      /* Nunca ganhou (-1): aceita ?pro= */
       const params = new URLSearchParams(location.search);
-      const token = (params.get('pro') || '').trim();
-      if (token && BRAND.proTokens.indexOf(token) !== -1) {
+      let token = (params.get('pro') || '').trim();
+      if (!token) {
+        try { token = sessionStorage.getItem('jl_pro') || ''; } catch (_) { token = ''; }
+      }
+
+      if (token === 'JL-PRO-DEMO' && isLocalInviteHost()) {
         grantProLicense('demo');
         try { sessionStorage.setItem('jl_pro', token); } catch (_) {}
         return;
       }
+
+      if (!token || token === 'JL-PRO-DEMO') {
+        updateProSendsBadge();
+        return;
+      }
+
       try {
-        const saved = sessionStorage.getItem('jl_pro');
-        if (saved && BRAND.proTokens.indexOf(saved) !== -1) {
-          grantProLicense('demo');
+        if (sessionStorage.getItem('jl_pro_ok') === token) {
+          grantProLicense(sessionStorage.getItem('jl_order_id') || 'paid');
+          return;
         }
       } catch (_) {}
-      updateProSendsBadge();
+
+      validateProTokenOnWorker(token);
+    }
+
+    async function validateProTokenOnWorker(token) {
+      const base = (BRAND.checkoutApiBase || '').replace(/\/$/, '');
+      if (!base || !token) return;
+      try {
+        const res = await fetch(base + '/api/licenses/pro?token=' + encodeURIComponent(token));
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          try {
+            sessionStorage.setItem('jl_pro', token);
+            sessionStorage.setItem('jl_pro_ok', token);
+            if (data.orderId) {
+              sessionStorage.setItem('jl_order_id', data.orderId);
+              localStorage.setItem('jl_order_id', data.orderId);
+            }
+          } catch (_) {}
+          grantProLicense(data.orderId || 'paid');
+          applyProPermissions();
+          updateBrandUi();
+          updateProSendsBadge();
+        }
+      } catch (_) {}
     }
 
     function consumeProLicense(reason) {
@@ -1975,7 +2034,7 @@
         if (orderId && base) {
           fetch(base + '/api/orders/' + encodeURIComponent(orderId) + '/consume', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: orderAuthHeaders(orderId),
             body: JSON.stringify({ reason: reason || 'outbound' }),
             keepalive: true
           }).catch(() => {});
@@ -3621,6 +3680,11 @@
           })
         });
         const data = await res.json().catch(() => ({}));
+        if (data.error === 'rate_limited') {
+          setVendaPayStatus('Muitas tentativas. Espera um minuto e tenta de novo.');
+          showToast('Checkout limitado — tenta daqui a pouco');
+          return;
+        }
         if (data.error === 'test_token_not_allowed' || data.error === 'sandbox_checkout_not_allowed') {
           setVendaPayStatus(
             'O Worker ainda tem token de TESTE do Mercado Pago. No PowerShell: npx wrangler secret put MP_ACCESS_TOKEN (produção, sem TEST-) e depois Pagar Pro de novo.'
@@ -3644,6 +3708,7 @@
           if (data.orderId) {
             sessionStorage.setItem('jl_order_id', data.orderId);
             localStorage.setItem('jl_order_id', data.orderId);
+            saveOrderSecret(data.orderId, data.orderSecret);
           }
         } catch (_) {}
 
@@ -3701,19 +3766,28 @@
       try {
         try {
           await fetch(base + '/api/orders/' + encodeURIComponent(orderId) + '/sync', {
-            method: 'POST'
+            method: 'POST',
+            headers: orderAuthHeaders(orderId)
           });
         } catch (_) { /* ignore */ }
 
         const res = await fetch(
-          base + '/api/orders/' + encodeURIComponent(orderId) + '?sync=1'
+          base + '/api/orders/' + encodeURIComponent(orderId) + '?sync=1',
+          { headers: orderAuthHeaders(orderId) }
         );
         const data = await res.json().catch(() => ({}));
         if (res.status === 404) {
           setVendaPayStatus(
-            'Pedido não encontrado neste Worker. Abra de novo com &api=cf na URL (Cloudflare), sem o :8787.'
+            'Pedido não encontrado neste Worker. Abre de novo com &api=cf na URL (Cloudflare), sem o :8787.'
           );
           showToast('Pedido não encontrado no Worker');
+          return false;
+        }
+        if (res.status === 401) {
+          setVendaPayStatus(
+            'Esta aba não tem a prova do pagamento. Não feche a aba da venda ao pagar; se já fechou, pague de novo.'
+          );
+          showToast('Pedido sem prova nesta aba');
           return false;
         }
         if (data.status === 'paid' && data.proUrl) {

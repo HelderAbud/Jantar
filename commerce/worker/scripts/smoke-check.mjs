@@ -68,7 +68,7 @@ async function main() {
   }
   ok(
     'POST /api/checkout',
-    checkoutRes.status === 200 && !!cjson.orderId && !!cjson.checkoutUrl,
+    checkoutRes.status === 200 && !!cjson.orderId && !!cjson.checkoutUrl && !!cjson.orderSecret,
     String(checkoutRes.status)
   );
   ok(
@@ -78,8 +78,11 @@ async function main() {
   );
 
   if (cjson.orderId) {
-    const ord = await get(API + '/api/orders/' + cjson.orderId);
-    const o = JSON.parse(ord.text);
+    const ord = await fetch(API + '/api/orders/' + cjson.orderId, {
+      headers: { 'X-Order-Secret': cjson.orderSecret || '' }
+    });
+    const otext = await ord.text();
+    const o = JSON.parse(otext);
     ok('GET pedido pending', ord.status === 200 && o.status === 'pending', o.status);
   } else {
     ok('GET pedido pending', false, 'sem orderId');

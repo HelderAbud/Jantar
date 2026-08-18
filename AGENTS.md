@@ -37,6 +37,7 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 
 - **Free:** montar + **só visualizar** (`Ver convite`). Sem copiar link, sem gerar link compartilhável, sem enviar WhatsApp/Instagram.
 - **Pro** (`?pro=<token>` após pagamento): libera copiar/gerar link e enviar mensagem; remove marca “só visualizar”.
+- Token de demo `JL-PRO-DEMO` só em localhost. No Pages, Pro vem do token **por pedido** depois do pagamento.
 - Responder no WhatsApp no fim do fluxo (pessoa convidada) continua liberado e **não** consome a licença Pro de 1 envio.
 
 ### Campos editáveis (MVP)
@@ -89,7 +90,7 @@ Mudanças no fluxo, textos-base ou interações devem atualizar este contrato (o
 | Editor local | http://localhost:5177/?modo=editor |
 | Editor público | https://helderabud.github.io/Jantar/?modo=editor |
 | Venda (white-label) | http://localhost:5177/?modo=venda · `/?modo=venda` no Pages |
-| Pro (demo token) | `/?pro=JL-PRO-DEMO` |
+| Pro (demo local) | `/?pro=JL-PRO-DEMO` só em localhost |
 | Pagamento sandbox MP | `docs/venda/SANDBOX-MERCADO-PAGO.md` · `cd commerce/worker && npm run dev:mp` |
 | Pagamento produção | `docs/venda/DEPLOY-CLOUDFLARE.md` · Worker Cloudflare + token MP de produção |
 | Testes do Worker | `cd commerce/worker && npm test` |

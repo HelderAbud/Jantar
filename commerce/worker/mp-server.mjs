@@ -11,7 +11,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomUUID, createHash } from 'node:crypto';
+import { randomUUID, createHash, randomBytes } from 'node:crypto';
 import { buildMpReturnUrls } from './lib/checkout-urls.mjs';
 import {
   paymentAmountMatches,
@@ -48,6 +48,7 @@ function loadDevVars() {
 const ENV = loadDevVars();
 const orders = new Map();
 const events = new Map();
+const licenses = new Map();
 
 function appBase() {
   const origin = (ENV.PUBLIC_APP_ORIGIN || 'http://127.0.0.1:5177').replace(/\/$/, '');
@@ -77,7 +78,7 @@ function json(res, status, body, origin) {
   const headers = {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Headers': 'Content-Type, X-Order-Secret'
   };
   if (
     origin &&
@@ -117,14 +118,20 @@ function b64url(obj) {
     .replace(/=+$/, '');
 }
 
+function providedSecret(req, url) {
+  return String(req.headers['x-order-secret'] || url.searchParams.get('secret') || '').trim();
+}
+
 function fulfill(order) {
-  const proToken = ENV.PRO_TOKEN || 'JL-PRO-DEMO';
   const payload = order.configPayload || b64url({ f: order.fromName, t: order.toName });
+  const proToken = 'jl_' + randomBytes(16).toString('hex');
   order.status = 'paid';
   order.paidAt = new Date().toISOString();
+  order.proToken = proToken;
   order.proUrl =
     `${appBase()}?pro=${encodeURIComponent(proToken)}&modo=editor#c=${payload}`;
   orders.set(order.id, order);
+  licenses.set(proToken, order.id);
   return order;
 }
 
@@ -412,10 +419,12 @@ const server = http.createServer(async (req, res) => {
       if (!fromName || !toName) return json(res, 400, { error: 'names_required' }, origin);
 
       const orderId = 'ord_' + randomUUID().replace(/-/g, '').slice(0, 16);
+      const orderSecret = randomBytes(32).toString('hex');
       const invitePhone = String(body?.invitePhone || '').replace(/\D/g, '').slice(0, 15);
       const replyPhone = String(body?.replyPhone || '').replace(/\D/g, '').slice(0, 15);
       const order = {
         id: orderId,
+        orderSecret,
         status: 'pending',
         fromName,
         toName,
@@ -473,6 +482,7 @@ const server = http.createServer(async (req, res) => {
         200,
         {
           orderId,
+          orderSecret,
           checkoutUrl,
           mock: false,
           amountCentavos: order.amountCentavos,
@@ -482,10 +492,27 @@ const server = http.createServer(async (req, res) => {
       );
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/licenses/pro') {
+      const token = String(url.searchParams.get('token') || '').trim();
+      const originHost = String(ENV.PUBLIC_APP_ORIGIN || '');
+      if (token === 'JL-PRO-DEMO') {
+        if (originHost.includes('helderabud.github.io')) {
+          return json(res, 401, { error: 'unauthorized' }, origin);
+        }
+        return json(res, 200, { ok: true, demo: true }, origin);
+      }
+      const orderId = licenses.get(token);
+      if (!orderId) return json(res, 401, { error: 'unauthorized' }, origin);
+      return json(res, 200, { ok: true, orderId }, origin);
+    }
+
     const syncMatch = url.pathname.match(/^\/api\/orders\/([^/]+)\/sync$/);
     if (req.method === 'POST' && syncMatch) {
       const order = orders.get(syncMatch[1]);
       if (!order) return json(res, 404, { error: 'not_found' }, origin);
+      if (providedSecret(req, url) !== order.orderSecret) {
+        return json(res, 401, { error: 'unauthorized' }, origin);
+      }
       const updated = await syncOrderFromMp(order);
       return json(
         res,
@@ -508,6 +535,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && consumeMatch) {
       const order = orders.get(consumeMatch[1]);
       if (!order) return json(res, 404, { error: 'not_found' }, origin);
+      if (providedSecret(req, url) !== order.orderSecret) {
+        return json(res, 401, { error: 'unauthorized' }, origin);
+      }
       if (order.status !== 'paid') return json(res, 409, { error: 'not_paid' }, origin);
       if (order.consumed) {
         return json(
@@ -532,6 +562,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && orderMatch) {
       let order = orders.get(orderMatch[1]);
       if (!order) return json(res, 404, { error: 'not_found' }, origin);
+      if (providedSecret(req, url) !== order.orderSecret) {
+        return json(res, 401, { error: 'unauthorized' }, origin);
+      }
       if (order.status === 'pending' && url.searchParams.get('sync') === '1') {
         order = await syncOrderFromMp(order);
       }
