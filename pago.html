@@ -79,7 +79,10 @@
 
       try {
         if (window.opener && order) {
-          window.opener.postMessage({ type: 'jl-mp-paid', orderId: order, status: status }, '*');
+          var payload = { type: 'jl-mp-paid', orderId: order, status: status };
+          ['https://helderabud.github.io', 'http://127.0.0.1:5177', 'http://localhost:5177'].forEach(function (origin) {
+            try { window.opener.postMessage(payload, origin); } catch (ignore) {}
+          });
         }
       } catch (e) {}
     })();

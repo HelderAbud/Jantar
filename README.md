@@ -44,7 +44,7 @@ Sem `#c=` na URL, o site continua com o convite-exemplo Bruno → Lara.
    - da pessoa convidada (recebe o link);
    - o seu (recebe a resposta no fim do convite).
 4. Ajuste textos se quiser (se deixar o modelo padrão, o link fica bem mais curto).
-5. Use **Ver convite** para pré-visualizar, **Copiar link curto** ou **Enviar link no WhatsApp**.
+5. **Free:** use **Ver convite** para pré-visualizar. **Copiar link curto** e **Enviar link no WhatsApp** só no **Pro** (pagamento ou `?pro=` em demo local).
 
 Opções de comida no editor: uma por linha no formato `emoji|nome` (ex.: `🍕|Pizza`). Use `|chef` na última coluna se quiser o estilo “chef decide”.
 
@@ -53,7 +53,7 @@ Placeholders da mensagem WhatsApp final: `{from}` `{to}` `{food}` `{date}`.
 ### Dicas de link
 
 - Só nomes + WhatsApps (textos padrão) → link curto no `#c=`.
-- **Copiar link curto** / **Enviar** tentam encurtar (CleanURI; se falhar, usam o link completo do Pages).
+- **Copiar link curto** / **Enviar** (Pro) tentam encurtar (CleanURI; se falhar, usam o link completo do Pages).
 - Limite prático ~2000 caracteres; o editor avisa se passar.
 - Quem tem o link (incluindo `#c=`) vê o conteúdo: trate como semi-público.
 
