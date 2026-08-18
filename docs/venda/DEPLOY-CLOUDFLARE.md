@@ -35,9 +35,10 @@ Se ainda quiser tentar OAuth: deixe `npx wrangler login` **rodando**, clique Aut
 ```bash
 npx wrangler secret put MP_ACCESS_TOKEN
 npx wrangler secret put PRO_TOKEN
+npx wrangler secret put MP_WEBHOOK_SECRET
 ```
 
-`PRO_TOKEN` = o mesmo de `BRAND.proTokens` no `index.html` (`JL-PRO-DEMO` no MVP).
+`PRO_TOKEN` = o mesmo de `BRAND.proTokens` no `index.html` (`JL-PRO-DEMO` no MVP). Sem `MP_WEBHOOK_SECRET`, o Worker em produção **recusa** webhooks (fail-closed). Secret: painel MP → aplicação → Webhooks → configurar notificação.
 
 O Access Token de produção **não** começa com `TEST-`. Comprador `TESTUSER…` **não** funciona com token de produção.
 

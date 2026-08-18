@@ -1,5 +1,6 @@
 # Copie para .dev.vars (gitignored) — NUNCA commitar valores reais.
 # Cloudflare: wrangler secret put MP_ACCESS_TOKEN
+#             wrangler secret put MP_WEBHOOK_SECRET
 
 MP_ACCESS_TOKEN=
 MP_WEBHOOK_SECRET=
@@ -11,7 +12,6 @@ PUBLIC_APP_PATH=/
 PUBLIC_RETURN_ORIGIN=https://helderabud.github.io/Jantar
 # Sandbox real: cole Access Token TEST em MP_ACCESS_TOKEN e use false
 MOCK_MODE=false
-MP_ACCESS_TOKEN=
 # Opcional — túnel público para webhook:
 # MP_NOTIFICATION_URL=https://SEU-TUNEL/api/webhooks/mercadopago
 # Preço de teste = R$ 2,00 (200). Produção: ex. 2900 = R$ 29,00.

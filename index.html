@@ -1109,9 +1109,13 @@
 
     body.venda-open #venda-panel {
       display: block;
-      min-height: 100vh;
-      overflow: auto;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      overflow-y: auto;
+      overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
       padding: 24px 16px 40px;
     }
 
@@ -2206,6 +2210,8 @@
     function personalizeDefaults(fromName, toName) {
       const from = fromName || DEFAULT_CONFIG.fromName;
       const to = toName || DEFAULT_CONFIG.toName;
+      const fromH = escapeHtml(from);
+      const toH = escapeHtml(to);
       return {
         fromName: from,
         toName: to,
@@ -2216,7 +2222,7 @@
           'Você topa jantar comigo?',
           '🍷🍝✨'
         ],
-        resultNote: 'A IA detectou que <strong>' + from + ' acha ' + to + ' linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
+        resultNote: 'A IA detectou que <strong>' + fromH + ' acha ' + toH + ' linda</strong>, e há tempos tenta tirar um sorriso e te conhecer.',
         missionPrompt: 'Você aceita jantar comigo?',
         foodOptions: DEFAULT_CONFIG.foodOptions.map((x) => ({
           emoji: x.emoji,
@@ -2414,7 +2420,7 @@
       }
 
       const note = document.getElementById('result-note');
-      if (note) note.innerHTML = cfg.resultNote;
+      if (note) note.innerHTML = sanitizeNote(cfg.resultNote || '');
 
       const mission = document.getElementById('mission-prompt');
       if (mission) mission.textContent = cfg.missionPrompt;
@@ -2951,9 +2957,6 @@
       const text = encodeURIComponent(buildWhatsAppMessage());
       window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
       playSuccess();
-      if (isProUnlocked && !proLicenseConsumed) {
-        consumeProLicense('invitee_reply');
-      }
     }, true);
 
     document.getElementById('btn-back-editor').addEventListener('click', () => {

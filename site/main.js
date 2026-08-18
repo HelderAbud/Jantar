@@ -195,7 +195,7 @@
     liveFrame.hidden = false;
     liveFrame.src = "../?embed=1";
     phone.classList.add("is-live");
-    if (liveBtn) liveBtn.textContent = "Ver slides LinkedIn";
+    if (liveBtn) liveBtn.textContent = "Ver slides no telefone";
   }
 
   function showSlides() {
@@ -215,5 +215,7 @@
 
   if (desktopMq.matches && liveFrame && phone) {
     showLiveApp();
+  } else if (liveFrame && phone) {
+    showSlides();
   }
 })();

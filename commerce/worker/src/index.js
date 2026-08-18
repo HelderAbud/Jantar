@@ -7,6 +7,11 @@
  */
 
 import { buildMpReturnUrls, pickMpCheckoutUrl } from '../lib/checkout-urls.mjs';
+import {
+  paymentAmountMatches,
+  verifyMpWebhookSignature,
+  webhookSignatureRequired
+} from '../lib/mp-webhook-security.mjs';
 
 const ALLOWED_ORIGINS = [
   'http://127.0.0.1:5177',
@@ -342,6 +347,10 @@ async function handleConsumeOrder(orderId, env) {
   const raw = await kvGet(env, `order:${id}`);
   if (!raw) return json({ error: 'not_found' }, 404);
   const order = JSON.parse(raw);
+  if (order.status !== 'paid') return json({ error: 'not_paid' }, 409);
+  if (order.consumed) {
+    return json({ ok: true, id: order.id, consumed: true, consumedAt: order.consumedAt });
+  }
   order.consumed = true;
   order.consumedAt = new Date().toISOString();
   await kvPut(env, `order:${order.id}`, JSON.stringify(order), { expirationTtl: 60 * 60 * 24 * 30 });
@@ -361,6 +370,10 @@ async function syncOrderFromMp(env, order) {
   const results = data.results || [];
   const approved = results.find((p) => p.status === 'approved');
   if (approved) {
+    if (!paymentAmountMatches(order, approved)) {
+      console.warn('amount_mismatch', order.id, approved.transaction_amount, order.amountCentavos);
+      return order;
+    }
     order.providerRef = String(approved.id);
     return fulfillOrder(env, order);
   }
@@ -401,6 +414,22 @@ async function buildDefaultPayload(fromName, toName) {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+async function requireWebhookSignature(request, env, paymentId) {
+  if (!webhookSignatureRequired(env, isMock)) return null;
+  const secret = String(env.MP_WEBHOOK_SECRET || '').trim();
+  if (!secret) return json({ error: 'webhook_secret_required' }, 401);
+  const url = new URL(request.url);
+  const dataId = url.searchParams.get('data.id') || paymentId || '';
+  const ok = await verifyMpWebhookSignature({
+    signatureHeader: request.headers.get('x-signature') || '',
+    requestId: request.headers.get('x-request-id') || '',
+    dataId,
+    secret
+  });
+  if (!ok) return json({ error: 'invalid_signature' }, 401);
+  return null;
+}
+
 async function handleMpWebhook(request, env, ctx) {
   const url = new URL(request.url);
   let topic = url.searchParams.get('topic') || url.searchParams.get('type') || '';
@@ -420,25 +449,32 @@ async function handleMpWebhook(request, env, ctx) {
     if (body.id && !paymentId) paymentId = String(body.id);
   }
 
-  const eventKey = `wh:${topic}:${paymentId || 'unknown'}:${await hashRequest(request, body)}`;
+  // Mock pay shortcut: POST { mock:true, orderId } — só com MOCK_MODE
+  if (body && body.mock === true && body.orderId) {
+    if (!isMock(env)) return json({ error: 'mock_forbidden' }, 403);
+    const raw = await kvGet(env, `order:${body.orderId}`);
+    if (!raw) return json({ error: 'not_found' }, 404);
+    let order = JSON.parse(raw);
+    order = await fulfillOrder(env, order);
+    return json({ ok: true, orderId: order.id, status: order.status });
+  }
+
+  const sigErr = await requireWebhookSignature(request, env, paymentId);
+  if (sigErr) return sigErr;
+
+  if (!paymentId) {
+    console.warn('webhook skip', { topic, paymentId, hasToken: !!env.MP_ACCESS_TOKEN });
+    return json({ ok: true, skipped: true });
+  }
+
+  const eventKey = `wh:${topic}:${paymentId}:${await hashRequest(request, body)}`;
   const seen = await kvGet(env, eventKey);
   if (seen) {
     return json({ ok: true, duplicate: true });
   }
 
-  // Mock pay shortcut: POST { mock:true, orderId }
-  if (body && body.mock === true && body.orderId) {
-    const raw = await kvGet(env, `order:${body.orderId}`);
-    if (!raw) return json({ error: 'not_found' }, 404);
-    let order = JSON.parse(raw);
-    order = await fulfillOrder(env, order);
-    await kvPut(env, eventKey, '1', { expirationTtl: 60 * 60 * 24 * 7 });
-    return json({ ok: true, orderId: order.id, status: order.status, proUrl: order.proUrl });
-  }
-
-  if (!env.MP_ACCESS_TOKEN || !paymentId) {
-    console.warn('webhook skip', { topic, paymentId, hasToken: !!env.MP_ACCESS_TOKEN });
-    await kvPut(env, eventKey, '1', { expirationTtl: 60 * 60 * 24 * 7 });
+  if (!env.MP_ACCESS_TOKEN) {
+    console.warn('webhook skip', { topic, paymentId, hasToken: false });
     return json({ ok: true, skipped: true });
   }
 
@@ -467,6 +503,10 @@ async function handleMpWebhook(request, env, ctx) {
   order.providerRef = String(payment.id);
 
   if (payment.status === 'approved') {
+    if (!paymentAmountMatches(order, payment)) {
+      await kvPut(env, eventKey, '1', { expirationTtl: 60 * 60 * 24 * 7 });
+      return json({ ok: true, orderId, status: order.status, error: 'amount_mismatch' });
+    }
     order = await fulfillOrder(env, order);
   } else if (payment.status === 'rejected' || payment.status === 'cancelled') {
     order.status = 'failed';

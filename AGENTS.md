@@ -37,7 +37,7 @@ Base operacional alinhada ao **Helder Method v1.2** e ao **Superpowers Cursor Pl
 
 - **Free:** montar + **só visualizar** (`Ver convite`). Sem copiar link, sem gerar link compartilhável, sem enviar WhatsApp/Instagram.
 - **Pro** (`?pro=<token>` após pagamento): libera copiar/gerar link e enviar mensagem; remove marca “só visualizar”.
-- Responder no WhatsApp no fim do fluxo (pessoa convidada) continua liberado.
+- Responder no WhatsApp no fim do fluxo (pessoa convidada) continua liberado e **não** consome a licença Pro de 1 envio.
 
 ### Campos editáveis (MVP)
 
@@ -96,7 +96,7 @@ Mudanças no fluxo, textos-base ou interações devem atualizar este contrato (o
 | Publicar | Branch → PR → merge em `Main` → GitHub Pages |
 | Status Pages | `gh api repos/HelderAbud/Jantar/pages --jq '{status, html_url}'` |
 
-Não há build, npm ou testes automatizados neste repositório.
+Há testes do Worker (`cd commerce/worker && npm test`; CI em `.github/workflows/worker-test.yml`). Não há testes automatizados do `index.html`. `/api/shorten` existe só no `mp-server` local; no Pages o front usa CleanURI / is.gd.
 
 ---
 

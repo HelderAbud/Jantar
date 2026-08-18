@@ -91,6 +91,45 @@ describe('CF worker order parity', () => {
     assert.equal(got.json.consumed, true);
   });
 
+  it('refuses mock webhook when MOCK_MODE is off', async () => {
+    const kv = memoryKv();
+    const mockEnv = envWithKv({ ORDERS: kv });
+    const created = await call(mockEnv, 'POST', '/api/checkout', {
+      fromName: 'Bruno',
+      toName: 'Lara',
+      invitePhone: '5561999999999',
+      replyPhone: '5561888888888'
+    });
+    const prod = envWithKv({
+      ORDERS: kv,
+      MOCK_MODE: 'false',
+      MP_ACCESS_TOKEN: 'APP_USR-dummy',
+      PUBLIC_APP_ORIGIN: 'http://127.0.0.1:5177'
+    });
+    const mockPay = await call(prod, 'POST', '/api/webhooks/mercadopago', {
+      mock: true,
+      orderId: created.json.orderId
+    });
+    assert.equal(mockPay.status, 403);
+    assert.equal(mockPay.json.error, 'mock_forbidden');
+  });
+
+  it('mock webhook does not return proUrl', async () => {
+    const created = await call(env, 'POST', '/api/checkout', {
+      fromName: 'Bruno',
+      toName: 'Lara',
+      invitePhone: '5561999999999',
+      replyPhone: '5561888888888'
+    });
+    const paid = await call(env, 'POST', '/api/webhooks/mercadopago', {
+      mock: true,
+      orderId: created.json.orderId
+    });
+    assert.equal(paid.status, 200);
+    assert.equal(paid.json.status, 'paid');
+    assert.equal(paid.json.proUrl, undefined);
+  });
+
   it('refuses production origin without KV', async () => {
     const bare = {
       MOCK_MODE: 'true',

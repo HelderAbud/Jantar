@@ -100,6 +100,8 @@ cloudflared tunnel --url http://127.0.0.1:8787
 
 Coloque a URL HTTPS em `MP_NOTIFICATION_URL=.../api/webhooks/mercadopago` e reinicie `mp-server.mjs`.
 
+**Assinatura (produção):** no painel MP, Webhooks → configurar notificação → revele a **secret key**. Grave em `MP_WEBHOOK_SECRET` (`.dev.vars` local ou `wrangler secret put` no Worker). No GitHub Pages o Worker recusa webhook sem esse secret. Localhost sem secret continua a aceitar (o fluxo usa sync/`Já paguei`).
+
 ## 5. Checklist
 
 - [ ] Token TEST no `.dev.vars`  

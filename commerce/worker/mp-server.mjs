@@ -13,6 +13,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID, createHash } from 'node:crypto';
 import { buildMpReturnUrls } from './lib/checkout-urls.mjs';
+import {
+  paymentAmountMatches,
+  verifyMpWebhookSignature,
+  webhookSignatureRequired
+} from './lib/mp-webhook-security.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8787);
@@ -222,6 +227,10 @@ async function syncOrderFromMp(order) {
 
   const approved = results.find((p) => p.status === 'approved');
   if (approved) {
+    if (!paymentAmountMatches(order, approved)) {
+      console.warn('amount_mismatch', order.id, approved.transaction_amount, order.amountCentavos);
+      return order;
+    }
     order.providerRef = String(approved.id);
     console.log('sync paid', order.id, 'payment', approved.id);
     return fulfill(order);
@@ -243,12 +252,28 @@ async function syncOrderFromMp(order) {
   return order;
 }
 
-async function handleWebhook(body, query) {
+async function handleWebhook(body, query, headers = {}) {
   let topic = query.get('topic') || query.get('type') || '';
   let paymentId = query.get('id') || query.get('data.id') || '';
   if (body) {
     if (body.type) topic = body.type;
     if (body.data && body.data.id) paymentId = String(body.data.id);
+  }
+
+  if (webhookSignatureRequired(ENV, () => isMock())) {
+    const secret = String(ENV.MP_WEBHOOK_SECRET || '').trim();
+    if (!secret) return { error: 'webhook_secret_required', status: 401 };
+    const ok = await verifyMpWebhookSignature({
+      signatureHeader: headers['x-signature'] || '',
+      requestId: headers['x-request-id'] || '',
+      dataId: query.get('data.id') || paymentId,
+      secret
+    });
+    if (!ok) return { error: 'invalid_signature', status: 401 };
+  }
+
+  if (!paymentId) {
+    return { ok: true, skipped: true };
   }
 
   const key = createHash('sha256')
@@ -258,7 +283,7 @@ async function handleWebhook(body, query) {
   if (events.has(key)) return { ok: true, duplicate: true };
   events.set(key, true);
 
-  if (!ENV.MP_ACCESS_TOKEN || !paymentId) {
+  if (!ENV.MP_ACCESS_TOKEN) {
     return { ok: true, skipped: true };
   }
 
@@ -266,15 +291,19 @@ async function handleWebhook(body, query) {
     headers: { Authorization: 'Bearer ' + ENV.MP_ACCESS_TOKEN }
   });
   const payment = await payRes.json().catch(() => null);
-  if (!payRes.ok || !payment) return { error: 'payment_fetch_failed' };
+  if (!payRes.ok || !payment) return { error: 'payment_fetch_failed', status: 502 };
 
   const orderId = payment.external_reference;
   if (!orderId || !orders.has(orderId)) return { ok: true, order_missing: true };
 
   let order = orders.get(orderId);
   order.providerRef = String(payment.id);
-  if (payment.status === 'approved') order = fulfill(order);
-  else if (payment.status === 'rejected' || payment.status === 'cancelled') {
+  if (payment.status === 'approved') {
+    if (!paymentAmountMatches(order, payment)) {
+      return { ok: true, orderId, status: order.status, error: 'amount_mismatch' };
+    }
+    order = fulfill(order);
+  } else if (payment.status === 'rejected' || payment.status === 'cancelled') {
     order.status = 'failed';
     orders.set(orderId, order);
   }
@@ -479,6 +508,15 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && consumeMatch) {
       const order = orders.get(consumeMatch[1]);
       if (!order) return json(res, 404, { error: 'not_found' }, origin);
+      if (order.status !== 'paid') return json(res, 409, { error: 'not_paid' }, origin);
+      if (order.consumed) {
+        return json(
+          res,
+          200,
+          { ok: true, id: order.id, consumed: true, consumedAt: order.consumedAt },
+          origin
+        );
+      }
       order.consumed = true;
       order.consumedAt = new Date().toISOString();
       orders.set(order.id, order);
@@ -522,8 +560,9 @@ const server = http.createServer(async (req, res) => {
       url.pathname === '/api/webhooks/mercadopago'
     ) {
       const body = req.method === 'POST' ? await readBody(req).catch(() => null) : null;
-      const out = await handleWebhook(body, url.searchParams);
-      return json(res, out.error ? 502 : 200, out, origin);
+      const out = await handleWebhook(body, url.searchParams, req.headers);
+      const status = out.status || (out.error === 'payment_fetch_failed' ? 502 : 200);
+      return json(res, status, out, origin);
     }
 
     return json(res, 404, { error: 'not_found' }, origin);
