@@ -38,7 +38,7 @@ npx wrangler secret put PRO_TOKEN
 npx wrangler secret put MP_WEBHOOK_SECRET
 ```
 
-`PRO_TOKEN` = o mesmo de `BRAND.proTokens` no `index.html` (`JL-PRO-DEMO` no MVP). Sem `MP_WEBHOOK_SECRET`, o Worker em produção **recusa** webhooks (fail-closed). Secret: painel MP → aplicação → Webhooks → configurar notificação.
+`PRO_TOKEN` no Worker deixa de autenticar o site público. O editor Pro no Pages só abre com o token **por pedido** (`jl_…`) depois do pagamento. `JL-PRO-DEMO` continua só em localhost. Sem `MP_WEBHOOK_SECRET`, o Worker recusa webhooks (fail-closed).
 
 O Access Token de produção **não** começa com `TEST-`. Comprador `TESTUSER…` **não** funciona com token de produção.
 

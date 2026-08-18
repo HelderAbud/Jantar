@@ -22,7 +22,7 @@ Experiência: [landing](https://helderabud.github.io/Jantar/site/) · [demo](htt
 | Demo (exemplo Bruno → Lara) | https://helderabud.github.io/Jantar/ |
 | Editor (criar o seu) | https://helderabud.github.io/Jantar/?modo=editor |
 | Venda / white-label | https://helderabud.github.io/Jantar/?modo=venda |
-| Pro (demo) | acrescente `?pro=JL-PRO-DEMO` na URL |
+| Pro (demo local) | `/?pro=JL-PRO-DEMO` só em localhost |
 | Local | http://localhost:5177/ · `/site/` · `?modo=editor` · `?modo=venda` |
 
 Kit Instagram (Jantar Link): [`docs/instagram/`](docs/instagram/).

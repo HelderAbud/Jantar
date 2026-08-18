@@ -2,7 +2,7 @@
 
 Data: 2026-08-18  
 Projeto: Jantar Link  
-Status: **em implementação** — fatias A–D e F–G nesta sessão; **não iniciar E** sem gate humano.  
+Status: **em implementação** — fatia E nesta sessão; A–D e F–G já merged.  
 Trilha: **Hotfix** (fatias A–B) → **Complex** (fatias C–E) → **Normal** (F–G)  
 Origem: code review do repo (2026-08-18)
 

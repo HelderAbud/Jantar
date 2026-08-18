@@ -24,10 +24,14 @@ function envWithKv(extra) {
   };
 }
 
-async function call(env, method, path, body) {
+async function call(env, method, path, body, extraHeaders = {}) {
   const req = new Request('https://worker.test' + path, {
     method,
-    headers: { 'Content-Type': 'application/json', Origin: 'http://127.0.0.1:5177' },
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: 'http://127.0.0.1:5177',
+      ...extraHeaders
+    },
     body: body == null ? undefined : JSON.stringify(body)
   });
   const res = await worker.fetch(req, env, {});
@@ -39,6 +43,10 @@ async function call(env, method, path, body) {
     json = null;
   }
   return { status: res.status, json };
+}
+
+function withSecret(secret) {
+  return secret ? { 'X-Order-Secret': secret } : {};
 }
 
 describe('CF worker order parity', () => {
@@ -57,8 +65,15 @@ describe('CF worker order parity', () => {
     });
     assert.equal(created.status, 200);
     assert.ok(created.json.orderId);
+    assert.ok(created.json.orderSecret);
 
-    const got = await call(env, 'GET', '/api/orders/' + created.json.orderId);
+    const got = await call(
+      env,
+      'GET',
+      '/api/orders/' + created.json.orderId,
+      null,
+      withSecret(created.json.orderSecret)
+    );
     assert.equal(got.status, 200);
     assert.equal(got.json.invitePhone, '5561999999999');
     assert.equal(got.json.replyPhone, '5561888888888');
@@ -82,12 +97,19 @@ describe('CF worker order parity', () => {
       env,
       'POST',
       '/api/orders/' + created.json.orderId + '/consume',
-      { reason: 'outbound' }
+      { reason: 'outbound' },
+      withSecret(created.json.orderSecret)
     );
     assert.equal(consumed.status, 200);
     assert.equal(consumed.json.consumed, true);
 
-    const got = await call(env, 'GET', '/api/orders/' + created.json.orderId);
+    const got = await call(
+      env,
+      'GET',
+      '/api/orders/' + created.json.orderId,
+      null,
+      withSecret(created.json.orderSecret)
+    );
     assert.equal(got.json.consumed, true);
   });
 
