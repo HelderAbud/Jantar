@@ -12,7 +12,7 @@
 - Fase 3: + backend (auth leve, tabela de licenças, emissão/revogação de token)
 
 **Trilha Helder:** Complex (integração externa + monetização + possível backend).  
-**Status:** roadmap **F1–F3** aprovado + **F4 IG-API opcional** acrescentada (2026-07-27). Marca **Jantar Link** · handle `@basicmodaeacessorios` · demo **Bruno→Lara**. **F1.1** em curso; F4 **não** iniciar antes do gate F1.
+**Status:** roadmap **F1–F3** aprovado + **F4 IG-API opcional** acrescentada (2026-07-27). Marca **Jantar Link** · handle `@convitejantar` · demo **Bruno→Lara**. **F1.1** em curso; F4 **não** iniciar antes do gate F1.
 
 ---
 
@@ -35,7 +35,7 @@
 | Tema | Decisão |
 |------|----------|
 | Instagram | A+B — rebrand conta antiga + kit + botão share/copiar link Stories |
-| Marca IG / comercial | **Jantar Link** (handle atual `@basicmodaeacessorios`; alvo `@jantarlink`) |
+| Marca IG / comercial | **Jantar Link** (conta **ConviteJantar**, handle `@convitejantar`) |
 | Demo default no app | **Bruno → Lara** (substitui Helder → Alexia) |
 | Produto | Licença / white-label |
 | Valor pago (A+C) | Remover marca Helder–Alexia + pacote white-label + extras (temas/templates, sem watermark, suporte) |
@@ -208,7 +208,7 @@ Aprovar: go-live backend, política de reembolso/revogação, backup/secrets.
 
 **Pré-requisitos (gate):**
 - [ ] F1 concluída (kit + share + funil venda smoke)
-- [ ] Conta `@basicmodaeacessorios` (ou `@jantarlink`) em modo **Professional** + ativo ligado a Página/Business Meta
+- [ ] Conta `@convitejantar` em modo **Professional** + ativo ligado a Página/Business Meta
 - [ ] Decisão registrada: API direta **ou** ferramenta no meio (recomendado no início: Buffer/Make + drafts)
 - [ ] Aprovação explícita HITL antes de criar app Meta / tokens
 

@@ -8,7 +8,7 @@
 
 ## Onde paramos
 
-Produto **Jantar Link** (`@basicmodaeacessorios`): convite free = só ver; Pro = copiar/enviar após pagamento.
+Produto **Jantar Link** (`@convitejantar`): convite free = só ver; Pro = copiar/enviar após pagamento.
 
 | Fase | Estado |
 |------|--------|
